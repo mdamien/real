@@ -17,9 +17,13 @@ var prev_mX = -1,prev_mY = -1;
 function init() {
     world = new b2World(new b2Vec2(0, 10) /*gravity*/,true /*sleep*/);
 
-    var start = new b2Vec2(0, 5);
-    var end = new b2Vec2(5, 5);
-    addLine(start,end);
+    var p1 = new b2Vec2(0, 5);
+    var p2 = new b2Vec2(5, 5);
+    var p3 = new b2Vec2(10, 10);
+    var p4 = new b2Vec2(40, 10);
+    addLine(p1,p2);
+    addLine(p2,p3);
+    addLine(p3,p4);
 
     //setup debug draw
     var debugDraw = new b2DebugDraw();
