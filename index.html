@@ -1,0 +1,63 @@
+<html>
+   <head>
+      <title>Box2dWeb Demo</title>
+   </head>
+   <body onload="init();">
+      <canvas id="canvas" width="1000" height="500" style="background-color:#333333;" ></canvas>
+   <strong><pre>left click:new line
+right click:new shape
+</pre></strong>
+   </body>
+   <script type="text/javascript" src="js/box2d.js"></script>
+   <script type="text/javascript" src="js/box_utils.js"></script>
+   <script type="text/javascript">
+var world, SCALE = 30;
+var prev_mX = -1,prev_mY = -1;
+
+function init() {
+    world = new b2World(new b2Vec2(0, 10) /*gravity*/,true /*sleep*/);
+
+    var start = new b2Vec2(0, 5);
+    var end = new b2Vec2(5, 5);
+    addLine(start,end);
+
+    //setup debug draw
+    var debugDraw = new b2DebugDraw();
+       debugDraw.SetSprite(document.getElementById("canvas").getContext("2d"));
+       debugDraw.SetDrawScale(SCALE);
+       debugDraw.SetFillAlpha(0.5);
+       debugDraw.SetLineThickness(1.0);
+       debugDraw.SetFlags(b2DebugDraw.e_shapeBit | b2DebugDraw.e_jointBit);
+       world.SetDebugDraw(debugDraw);
+
+    document.addEventListener("mousedown", function(e) {
+        var mouseX = e.clientX/SCALE;
+        var mouseY = e.clientY/SCALE;
+        if(e.button === 0){ //left click
+            if(prev_mX != -1){
+                addLine(new b2Vec2(prev_mX,prev_mY), new b2Vec2(mouseX, mouseY));
+            }
+            prev_mX = mouseX;
+            prev_mY = mouseY;
+        }else{
+            addDynCircle(mouseX,mouseY);
+        }
+    }, true)
+
+    document.addEventListener("contextmenu", function(e) {
+        e.preventDefault();
+        window.event.returnValue = false;
+    }, false);
+
+    tick();
+}
+
+function tick() {
+  requestAnimationFrame(tick, 1000/60 );
+  world.Step(1 / 60, 10, 10);
+  world.DrawDebugData();
+  world.ClearForces();
+};
+      
+   </script>
+</html>
