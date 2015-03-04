@@ -56,3 +56,38 @@ function addDynCircle(x,y){
     bodyDef.position.y = y;
     world.CreateBody(bodyDef).CreateFixture(fixDef);
 }
+
+function createPlayer(x, y){
+    var fixDef = new b2FixtureDef;
+    fixDef.density = 1.0;
+    fixDef.friction = 0.5;
+    fixDef.restitution = 0.2;
+
+    var bodyDef = new b2BodyDef;
+    bodyDef.type = b2Body.b2_dynamicBody;
+    bodyDef.fixedRotation = true;
+
+    fixDef.shape = new b2PolygonShape;
+    fixDef.shape.SetAsBox(0.2,0.5);
+    bodyDef.position.x = x;
+    bodyDef.position.y = y;
+    var body = world.CreateBody(bodyDef).CreateFixture(fixDef);
+    return body;
+
+    /*
+    var def = new b2BodyDef;
+    def.type = b2Body.b2_dynamicBody;
+    var box = world.CreateBody(def);*/
+/*
+    var poly = new b2PolygonShape;
+    poly.SetAsBox(0.45, 1.4);
+    var playerPhysicsFixture = box.CreateFixture(poly, 1);
+
+    var circle = new b2CircleShape();     
+    circle.radius = 0.45;
+    circle.x = 0;
+    circle.y = -1.4;
+    var playerSensorFixture = box.CreateFixture(circle, 0);     
+
+    box.setBullet(true);*/
+}
