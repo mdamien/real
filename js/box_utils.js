@@ -11,7 +11,7 @@ var   b2Vec2 = Box2D.Common.Math.b2Vec2
 ,    b2DebugDraw = Box2D.Dynamics.b2DebugDraw
 ,    b2MouseJointDef =  Box2D.Dynamics.Joints.b2MouseJointDef;
 
-function addLine(start,end) {
+function addPhysicLine(start,end) {
     var fixDef = new b2FixtureDef;
     fixDef.shape = new b2PolygonShape;
     fixDef.density = 1.0;

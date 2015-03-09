@@ -1,20 +1,29 @@
 <html>
    <head>
-      <title>Box2dWeb Demo</title>
+      <title>Real</title>
    </head>
    <body onload="init();">
       <canvas id="canvas" width="1000" height="500" style="background-color:#333333;" ></canvas>
    <strong><pre>left click:new line
 right click:new shape
 </pre></strong>
-   </body>
-   <script type="text/javascript" src="js/box2d.js"></script>
+   </body
+>   <script type="text/javascript" src="js/box2d.js"></script>
    <script type="text/javascript" src="js/box_utils.js"></script>
    <script type="text/javascript">
-var world, player, SCALE = 30;
+var C = {};
+var world, ctx, player, SCALE = 30;
 var prev_mX = -1,prev_mY = -1;
 
+var LINES = []
+
+function addLine(a,b){
+    LINES.push([a,b]);
+    addPhysicLine(a,b);
+}
+
 function init() {
+    ctx = document.getElementById('canvas').getContext('2d');
     world = new b2World(new b2Vec2(0, 10) /*gravity*/,true /*sleep*/);
 
     var p1 = new b2Vec2(0, 5);
@@ -27,9 +36,9 @@ function init() {
 
     //setup debug draw
     var debugDraw = new b2DebugDraw();
-       debugDraw.SetSprite(document.getElementById("canvas").getContext("2d"));
+       debugDraw.SetSprite(ctx);
        debugDraw.SetDrawScale(SCALE);
-       debugDraw.SetFillAlpha(0.5);
+       debugDraw.SetFillAlpha(0.3);
        debugDraw.SetLineThickness(1.0);
        debugDraw.SetFlags(b2DebugDraw.e_shapeBit | b2DebugDraw.e_jointBit);
        world.SetDebugDraw(debugDraw);
@@ -53,11 +62,11 @@ function init() {
     }, false);
 
     document.addEventListener("keydown", function(e){
-        console.log(e);
+        //console.log(e);
         switch(e.keyCode) {
             case 38://up
             case 32://space
-                player.m_body.ApplyImpulse(new b2Vec2(0,4), player.m_body.GetWorldCenter())
+                player.m_body.ApplyImpulse(new b2Vec2(0,4), player.m_body.GetLocalCenter())
                 break;
             case 39:
                 player.m_body.ApplyImpulse(new b2Vec2(1,0), player.m_body.GetWorldCenter())
@@ -71,14 +80,43 @@ function init() {
 
     player = createPlayer(1,1);
 
-    tick();
+    //image loading
+    var images_to_load = 1;
+    var img_loading_counter = 0;
+
+    function lauch_if_loaded(){
+      img_loading_counter += 1;
+      console.log("loading: "+img_loading_counter+"/"+images_to_load)
+      if(images_to_load <= img_loading_counter){
+        tick();
+      }
+    }
+
+    C.bg = new Image();
+    C.bg.onload = function() { lauch_if_loaded(); }
+    C.bg.src = "bg.jpg";
+}
+
+function draw() {
+    ctx.drawImage(C.bg,0,0);
+    LINES.forEach(function(x){
+        var a = x[0], b = x[1];
+        ctx.beginPath();
+        ctx.moveTo(a.x*SCALE,a.y*SCALE);
+        ctx.lineTo(b.x*SCALE,b.y*SCALE);
+        ctx.stroke();
+    })
+    var player_pos = player.m_body.GetWorldPoint(new b2Vec2(0,0))
+    ctx.rect(player_pos.x*SCALE,player_pos.y*SCALE,10,15);
+    ctx.fill(); 
+    //world.DrawDebugData();
 }
 
 function tick() {
   requestAnimationFrame(tick, 1000/60 );
+  draw();
   world.Step(1 / 60, 10, 10);
-  world.DrawDebugData();
-  //world.ClearForces();
+  world.ClearForces();
 };
       
    </script>
