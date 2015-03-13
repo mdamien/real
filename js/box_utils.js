@@ -73,21 +73,25 @@ function createPlayer(x, y){
     bodyDef.position.y = y;
     var body = world.CreateBody(bodyDef).CreateFixture(fixDef);
     return body;
-
-    /*
-    var def = new b2BodyDef;
-    def.type = b2Body.b2_dynamicBody;
-    var box = world.CreateBody(def);*/
-/*
-    var poly = new b2PolygonShape;
-    poly.SetAsBox(0.45, 1.4);
-    var playerPhysicsFixture = box.CreateFixture(poly, 1);
-
-    var circle = new b2CircleShape();     
-    circle.radius = 0.45;
-    circle.x = 0;
-    circle.y = -1.4;
-    var playerSensorFixture = box.CreateFixture(circle, 0);     
-
-    box.setBullet(true);*/
 }
+
+
+function relMouseCoords(event){
+    var totalOffsetX = 0;
+    var totalOffsetY = 0;
+    var canvasX = 0;
+    var canvasY = 0;
+    var currentElement = this;
+
+    do{
+        totalOffsetX += currentElement.offsetLeft - currentElement.scrollLeft;
+        totalOffsetY += currentElement.offsetTop - currentElement.scrollTop;
+    }
+    while(currentElement = currentElement.offsetParent)
+
+    canvasX = event.pageX - totalOffsetX;
+    canvasY = event.pageY - totalOffsetY;
+
+    return {x:canvasX, y:canvasY}
+}
+HTMLCanvasElement.prototype.relMouseCoords = relMouseCoords;

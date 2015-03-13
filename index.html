@@ -1,12 +1,10 @@
 <html>
    <head>
       <title>Real</title>
+      <style type="text/css">body { margin:0; } canvas {  margin:auto;}</style>
    </head>
    <body onload="init();">
-      <canvas id="canvas" width="1000" height="500" style="background-color:#333333;" ></canvas>
-   <strong><pre>left click:new line
-right click:new shape
-</pre></strong>
+      <canvas id="canvas" width="800" height="500" style="background-color:#333333;" ></canvas>
    </body
 >   <script type="text/javascript" src="js/box2d.js"></script>
    <script type="text/javascript" src="js/box_utils.js"></script>
@@ -15,6 +13,10 @@ var C = {};
 var world, ctx, cvs, player, SCALE = 30;
 var prev_mX = -1,prev_mY = -1;
 var debug = false, editing = true;
+
+var LINES_HARDCODED = [
+[{"x":3.8333333333333335,"y":8.166666666666666},{"x":4.433333333333334,"y":7.6}],[{"x":4.433333333333334,"y":7.6},{"x":5.8,"y":7.333333333333333}],[{"x":5.8,"y":7.333333333333333},{"x":7.166666666666667,"y":6.9}],[{"x":7.166666666666667,"y":6.9},{"x":8.066666666666666,"y":6.9}],[{"x":8.066666666666666,"y":6.9},{"x":9.066666666666666,"y":7}],[{"x":9.066666666666666,"y":7},{"x":10.033333333333333,"y":7}],[{"x":10.033333333333333,"y":7},{"x":11.233333333333333,"y":7.033333333333333}],[{"x":11.233333333333333,"y":7.033333333333333},{"x":11.133333333333333,"y":7.6}],[{"x":0.2,"y":15},{"x":26.333333333333332,"y":14.266666666666667}],[{"x":26.333333333333332,"y":14.266666666666667},{"x":26.433333333333334,"y":0.13333333333333333}],[{"x":26.433333333333334,"y":0.13333333333333333},{"x":0.26666666666666666,"y":0.1}],[{"x":0.26666666666666666,"y":0.1},{"x":0.2,"y":14.933333333333334}],[{"x":9.966666666666667,"y":14.633333333333333},{"x":9.866666666666667,"y":13.9}],[{"x":9.866666666666667,"y":13.9},{"x":9.666666666666666,"y":13.2}],[{"x":9.666666666666666,"y":13.2},{"x":10.033333333333333,"y":12.5}],[{"x":10.033333333333333,"y":12.5},{"x":10.366666666666667,"y":12.5}],[{"x":10.366666666666667,"y":12.5},{"x":11.166666666666666,"y":12.566666666666666}],[{"x":11.166666666666666,"y":12.566666666666666},{"x":11.2,"y":13.766666666666667}],[{"x":11.2,"y":13.766666666666667},{"x":11.266666666666667,"y":14.433333333333334}],[{"x":11.266666666666667,"y":14.433333333333334},{"x":13.1,"y":14.433333333333334}],[{"x":13.1,"y":14.433333333333334},{"x":13.166666666666666,"y":11.466666666666667}],[{"x":13.166666666666666,"y":11.466666666666667},{"x":15.1,"y":11.4}],[{"x":15.1,"y":11.4},{"x":15.066666666666666,"y":14.4}],[{"x":11.3,"y":8.766666666666667},{"x":10.233333333333333,"y":8.6}],[{"x":10.233333333333333,"y":8.6},{"x":12.866666666666667,"y":8.133333333333333}],[{"x":12.866666666666667,"y":8.133333333333333},{"x":10.666666666666666,"y":8.233333333333333}],[{"x":10.666666666666666,"y":8.233333333333333},{"x":10.533333333333333,"y":8.466666666666667}]
+]
 
 var LINES = []
 
@@ -28,13 +30,9 @@ function init() {
     ctx = cvs.getContext('2d');
     world = new b2World(new b2Vec2(0, 10) /*gravity*/,true /*sleep*/);
 
-    var p1 = new b2Vec2(0, 5);
-    var p2 = new b2Vec2(5, 5);
-    var p3 = new b2Vec2(10, 10);
-    var p4 = new b2Vec2(40, 10);
-    addLine(p1,p2);
-    addLine(p2,p3);
-    addLine(p3,p4);
+    LINES_HARDCODED.forEach(function(x){
+	    addLine(x[0],x[1]);
+    })
 
     //setup debug draw
     var debugDraw = new b2DebugDraw();
@@ -46,17 +44,16 @@ function init() {
        world.SetDebugDraw(debugDraw);
 
     document.addEventListener("mousedown", function(e) {
-        var mouseX = e.clientX/SCALE;
-        var mouseY = e.clientY/SCALE;
-        if(e.button === 0){ //left click
-            if(prev_mX != -1){
-                addLine(new b2Vec2(prev_mX,prev_mY), new b2Vec2(mouseX, mouseY));
-            }
-            prev_mX = mouseX;
-            prev_mY = mouseY;
-        }else{
-            addDynCircle(mouseX,mouseY);
-        }
+    	coords = canvas.relMouseCoords(e);
+        var mouseX = coords.x/SCALE;
+        var mouseY = coords.y/SCALE;
+        if(e.button === 0){ //left click)
+	        if(prev_mX != -1){
+	            addLine(new b2Vec2(prev_mX,prev_mY), new b2Vec2(mouseX, mouseY));
+	        }
+	    }
+        prev_mX = mouseX;
+        prev_mY = mouseY;
     }, true)
 
     document.addEventListener("contextmenu", function(e) {
@@ -71,7 +68,7 @@ function init() {
                 e.preventDefault()
                 break;
             case 38://up
-                player.m_body.ApplyImpulse(new b2Vec2(0,10), player.m_body.GetLocalCenter())
+                player.m_body.ApplyImpulse(new b2Vec2(0,5), player.m_body.GetLocalCenter())
                 break;
             case 39:
                 player.m_body.ApplyImpulse(new b2Vec2(1,0), player.m_body.GetWorldCenter())
@@ -83,7 +80,7 @@ function init() {
         //e.preventDefault();
     })
 
-    player = createPlayer(1,1);
+    player = createPlayer(6,4);
 
     //image loading
     var images_to_load = 1;
@@ -104,7 +101,7 @@ function init() {
 
 function draw() {
     ctx.clearRect ( 0 , 0 , cvs.width, cvs.height );
-    ctx.drawImage(C.bg,0,0);
+    ctx.drawImage(C.bg,0,0, C.bg.width/4, C.bg.height/4);
     if(editing){
         LINES.forEach(function(x){
         var a = x[0], b = x[1];
