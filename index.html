@@ -86,7 +86,7 @@ function init() {
     player = createPlayer(1,1);
 
     //image loading
-    var images_to_load = 1;
+    var images_to_load = 2;
     var img_loading_counter = 0;
 
     function lauch_if_loaded(){
@@ -100,6 +100,9 @@ function init() {
     C.bg = new Image();
     C.bg.onload = function() { lauch_if_loaded(); }
     C.bg.src = "bg.jpg";
+    C.bike = new Image();
+    C.bike.onload = function() { lauch_if_loaded(); }
+    C.bike.src = "img/bike.png";
 }
 
 function draw() {
@@ -115,8 +118,11 @@ function draw() {
       })
     }
     var player_pos = player.m_body.GetWorldPoint(new b2Vec2(0,0))
-    ctx.rect(player_pos.x*SCALE,player_pos.y*SCALE,10,15);
-    ctx.fill();
+ //   ctx.rect(player_pos.x*SCALE,player_pos.y*SCALE,10,15);
+   // ctx.fill();
+
+    ctx.drawImage(C.bike, player_pos.x * SCALE, player_pos.y * SCALE)
+
     ctx.beginPath();ctx.moveTo(0,0);ctx.lineTo(0,0);ctx.stroke();
 }
 
