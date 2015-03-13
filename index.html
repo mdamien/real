@@ -12,8 +12,9 @@ right click:new shape
    <script type="text/javascript" src="js/box_utils.js"></script>
    <script type="text/javascript">
 var C = {};
-var world, ctx, player, SCALE = 30;
+var world, ctx, cvs, player, SCALE = 30;
 var prev_mX = -1,prev_mY = -1;
+var debug = false, editing = true;
 
 var LINES = []
 
@@ -23,7 +24,8 @@ function addLine(a,b){
 }
 
 function init() {
-    ctx = document.getElementById('canvas').getContext('2d');
+    cvs = document.getElementById('canvas');
+    ctx = cvs.getContext('2d');
     world = new b2World(new b2Vec2(0, 10) /*gravity*/,true /*sleep*/);
 
     var p1 = new b2Vec2(0, 5);
@@ -64,9 +66,12 @@ function init() {
     document.addEventListener("keydown", function(e){
         //console.log(e);
         switch(e.keyCode) {
-            case 38://up
             case 32://space
-                player.m_body.ApplyImpulse(new b2Vec2(0,4), player.m_body.GetLocalCenter())
+                editing = !editing;
+                e.preventDefault()
+                break;
+            case 38://up
+                player.m_body.ApplyImpulse(new b2Vec2(0,10), player.m_body.GetLocalCenter())
                 break;
             case 39:
                 player.m_body.ApplyImpulse(new b2Vec2(1,0), player.m_body.GetWorldCenter())
@@ -98,18 +103,21 @@ function init() {
 }
 
 function draw() {
+    ctx.clearRect ( 0 , 0 , cvs.width, cvs.height );
     ctx.drawImage(C.bg,0,0);
-    LINES.forEach(function(x){
+    if(editing){
+        LINES.forEach(function(x){
         var a = x[0], b = x[1];
         ctx.beginPath();
         ctx.moveTo(a.x*SCALE,a.y*SCALE);
         ctx.lineTo(b.x*SCALE,b.y*SCALE);
         ctx.stroke();
-    })
+      })
+    }
     var player_pos = player.m_body.GetWorldPoint(new b2Vec2(0,0))
     ctx.rect(player_pos.x*SCALE,player_pos.y*SCALE,10,15);
-    ctx.fill(); 
-    //world.DrawDebugData();
+    ctx.fill();
+    ctx.beginPath();ctx.moveTo(0,0);ctx.lineTo(0,0);ctx.stroke();
 }
 
 function tick() {
