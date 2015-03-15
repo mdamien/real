@@ -1,13 +1,21 @@
+- change bg
 
-
-LATER
 - fullscreen
 - img preload
 - correct mouse coords with scroll
 - box2d debug translate with viewport
-- remove french comments
 
-- react editing interface: world scale, gravity, lines, background, save, load, player pos, goal, coins, ...
+- react editing interface
+	- world scale
+	- gravity
+	- lines
+	- background
+	- save
+	- load
+	- player pos
+	- goal
+	- coins
+	- undo
+	- remove lines
 
-AFTER
 - touchscreen controls

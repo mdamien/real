@@ -29,7 +29,7 @@
 	var lines_parent = new createjs.Container();
 	var editing_mode = false;
 	lines_parent.visible = editing_mode;
-	
+
 	var vp = {
 		x:0,
 		y:0,
@@ -61,7 +61,7 @@
 
 		// Créer le player
 		player = new Player(vp.container, SCALE);
-		player.createPlayer(world, 25, canvasHeight-30, 20);
+		player.createPlayer(world, 100, canvasHeight-40, 20);
 
 		// Ajouter le listener de collisions
 		addContactListener();
@@ -132,10 +132,9 @@
 
 	// Ajout des cochons
 	this.addPigs = function() {
-		// Créer 30 "Pigs" placés aléatoirement dans l'environnement
 		for (var i=0; i<5; i++) {
 			var pig = box2dUtils.createPig(world, vp.container, Math.random() * canvasWidth, Math.random() * canvasHeight - 400 / SCALE);
-			pigs.push(pig);	// conserver les cochons dans un tableau
+			pigs.push(pig);
 		}
 	};
 
@@ -162,11 +161,17 @@
 
 		vp.x = player.skin.x-canvasWidth/2;
 		vp.y = player.skin.y-canvasHeight/2;
+		if(box2dDebug){
+			vp.x = 0;
+			vp.y = 0;
+		}
 
 		vp.container.x = -vp.x;
 		vp.container.y = -vp.y;
 
-		world.DrawDebugData();
+		if(box2dDebug){
+			world.DrawDebugData();
+		}
 		stage.update();
 	};
 
@@ -181,6 +186,10 @@
 		if(evt.key == 'b'){
 			box2dDebug = !box2dDebug;
 			this.debug_screen_on_off();
+		}
+		if(evt.key == 'p'){
+			var pig = box2dUtils.createPig(world, vp.container, Math.random() * canvasWidth, Math.random() * canvasHeight - 400 / SCALE);
+			pigs.push(pig);
 		}
 	}
 
