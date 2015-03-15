@@ -14,13 +14,10 @@
 	var canvasWidth, canvasHeight;	// dimensions du canvas
 	
 	// Gestion de la souris
-	var mouseX = undefined; // position x de la souris
-	var mouseY = undefined;	// position y de la souris
-	var mouseVec; // les coordonnées de la souris sous forme de vecteur (b2Vec2)
+	var curr_line = null;
 	var isMouseDown = false; // le clic est-il enfoncé ?
-	var mouseJoint = false; // la liaison de type "souris"
 	var canvasPosition; // la position du canvas
-	var selectedBody; // le body sélectionné
+
 	var b2Vec2 = Box2D.Common.Math.b2Vec2;
 	var b2AABB = Box2D.Collision.b2AABB;
 	var b2Body = Box2D.Dynamics.b2Body;
@@ -28,6 +25,8 @@
 	// pigs
 	var pigs = [];
 	
+	var lines = [];
+
 	// debug box2d ?
 	var box2dDebug = true;
 	
@@ -48,6 +47,7 @@
 		background = new Background(stage, SCALE);
 		
 		// Physics
+		addLines();
 		addPigs();			// ajout d'éléments physiques dynamiques (pigs)
 
 		// Créer le player
@@ -109,7 +109,11 @@
 		leftWall = box2dUtils.createBox(world, -5, canvasHeight, 1, canvasHeight, null, true, 'leftWall');
 		leftWall = box2dUtils.createBox(world, canvasWidth + 5, canvasHeight, 1, canvasHeight, null, true, 'leftWall');
 	};
-	
+
+	this.addLines = function() {
+		var line = new Line(stage, SCALE, [{x:10,y:15},{x:15,y:20}]);
+	};
+
 	// Ajout des cochons
 	this.addPigs = function() {
 		// Créer 30 "Pigs" placés aléatoirement dans l'environnement
@@ -132,34 +136,16 @@
 		for (var i=0; i < pigs.length; i++) {
 			pigs[i].update();
 		}
-
-		// Mouse Down et pas de liaison
-		if (isMouseDown && (!mouseJoint)) {
-			var body = getBodyAtMouse();
-            if (body) {
-            	mouseJoint = box2dUtils.createMouseJoint(world, body, mouseX, mouseY);
-            	body.SetAwake(true);
-            }
-        }
-        // Liaison existante
-		if (mouseJoint) {
-        	if (isMouseDown) {
-        		mouseJoint.SetTarget(new b2Vec2(mouseX, mouseY));
-            } else {
-            	world.DestroyJoint(mouseJoint);
-            	mouseJoint = null;
-            }
-        }
 		
 		// box2d
 		world.Step(1 / 15,  10, 10);
 		world.DrawDebugData();
 		world.ClearForces();
-		
 
 		// gérer les interactions avec le player
 		handleInteractions();
 		player.update();	
+
 		// easelJS
 		stage.update();
 	};
@@ -211,31 +197,31 @@
 				 || object.GetUserData() == 'shortTree');
 		}
 	}
-	
-	// Gestion de l'événement "Mouse Down"
+
+	this.mouseCoords = function(evt){
+		return {
+			x: (evt.clientX - canvasPosition.left) / SCALE,
+			y: (evt.clientY - canvasPosition.top) / SCALE
+		}
+	}
+
 	this.handleMouseDown = function(evt) {
 		isMouseDown = true;
+		var pos = this.mouseCoords(evt);
+		curr_line = new Line(stage, SCALE, [pos,pos]);
 		handleMouseMove(evt);
 		window.addEventListener('mousemove', handleMouseMove);
 	}
 	
-	/** GESTION DE LA SOURIS **/
-	
-	// Gestion de l'événement "Mouse Up"
 	this.handleMouseUp = function(evt) {
 		window.removeEventListener('mousemove', handleMouseMove);
 		isMouseDown = false;
-		mouseX = undefined;
-		mouseY = undefined;
 	}
 	
-	// Gestion de l'événement "Mouse Move"
 	this.handleMouseMove = function(evt) {
-		mouseX = (evt.clientX - canvasPosition.left) / SCALE;
-		mouseY = (evt.clientY - canvasPosition.top) / SCALE;
+		curr_line.setEnd(this.mouseCoords(evt));
 	}
 	
-	// Récupérer le body cliqué
 	this.getBodyAtMouse = function() {
 		selectedBody = null;
 		mouseVec = new b2Vec2(mouseX, mouseY);
@@ -256,8 +242,6 @@
         }
         return true;
 	}
-	
-	/** FIN GESTION DE LA SOURIS **/
 	
 	// Initialisation du bouton de debug
 	this.initBtn = function() {
