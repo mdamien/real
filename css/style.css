@@ -1,20 +1,19 @@
-/** Style appliqué sur la div contenant le canvas **/
+body, html {
+	background-color: #222;
+}
 #divCanvas {
 	width: 800px;
 	height: 600px;
 	margin: auto;
 }
-/** Style du canvas "visuel" gip **/
 #gipCanvas {
-	background-color: #61B4CF;
+	background-color: #333;
 	position: absolute;
 }
-/** Style du canvas "physique" box2d **/
 #box2dCanvas {
 	position: absolute;
 	opacity: 0;
 }
-/** Style de la div contenant le bouton de debug **/
 #divBtnDebug {
 	width: 100%;
 	text-align: center;

@@ -27,8 +27,7 @@
 	
 	var lines = [];
 	var lines_parent = new createjs.Container();
-	var editing_mode = true;
-
+	var editing_mode = false
 	var vp = {
 		x:0,
 		y:0,
@@ -56,7 +55,7 @@
 		
 		// Physics
 		addLines();
-		addPigs();			// ajout d'éléments physiques dynamiques (pigs)
+		//addPigs();			// ajout d'éléments physiques dynamiques (pigs)
 
 		// Créer le player
 		player = new Player(vp.container, SCALE);
@@ -73,14 +72,12 @@
 		window.addEventListener('keydown', handleKeyDown);
 		window.addEventListener('keyup', handleKeyUp);
 		
+		this.debug_screen_on_off()
 
 		// Désactiver les scrollings vertical lors d'un appui sur les touches directionnelles "haut" et "bas"
 		document.onkeydown = function(event) {
 			return event.keyCode != 38 && event.keyCode != 40;
 		}
-
-		/// Initialiser bouton
-		initBtn();
 		
 		startTicker(30);	// lancer le ticker
 	};
@@ -175,9 +172,13 @@
 	this.handleKeyDown = function(evt) {
 		keys[evt.keyCode] = true;
 
-		if(evt.keyCode == 69){
+		if(evt.key == 'e'){
 			editing_mode = !editing_mode;
 			lines_parent.visible = editing_mode;
+		}
+		if(evt.key == 'b'){
+			box2dDebug = !box2dDebug;
+			this.debug_screen_on_off();
 		}
 	}
 
@@ -270,16 +271,12 @@
         return true;
 	}
 	
-	// Initialisation du bouton de debug
-	this.initBtn = function() {
-		$('#btnB2d').click(function(){
-			box2dDebug = !box2dDebug;
-			if (box2dDebug) {
-				$(box2dCanvas).css('opacity', 1);
-			} else {
-				$(box2dCanvas).css('opacity', 0);
-			}
-		});
+	this.debug_screen_on_off = function() {
+		if (box2dDebug) {
+			$(box2dCanvas).css('opacity', 1);
+		} else {
+			$(box2dCanvas).css('opacity', 0);
+		}
 	};
 
 	// Ajout du listener sur les collisions

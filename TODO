@@ -5,7 +5,9 @@ LATER
 - img load
 - correct mouse coords with scrol
 - box2d debug transalte
+- remove french comments
 
+- react editing interface: world scale, gravity, lines, background, save, load, player pos, goal, coins, ...
 
 AFTER
 - touchscreen controls
