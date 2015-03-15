@@ -51,7 +51,7 @@
 		         debugDraw.SetSprite(context);		// contexte
 		         debugDraw.SetFillAlpha(0.3);		// transparence
 		         debugDraw.SetLineThickness(1.0); 	// épaisseur du trait
-		         debugDraw.SetDrawScale(30.0);		// échelle
+		         debugDraw.SetDrawScale(this.SCALE*1.0);		// échelle
 		         // Affecter la méthode de d'affichage du débug au monde 2dbox
 				 debugDraw.SetFlags(b2DebugDraw.e_shapeBit | b2DebugDraw.e_jointBit);
 		         world.SetDebugDraw(debugDraw);
@@ -564,6 +564,30 @@
 				playerObject.GetBody().CreateFixture(footDef);
 				
 				return playerObject;
+			},
+
+			addLineFixture: function(body, coords){
+			    var fixDef = new b2FixtureDef;
+			    fixDef.shape = new b2PolygonShape;
+			    fixDef.density = 1.0;
+			    fixDef.friction = 0.5;
+			    fixDef.restitution = .5;
+			    fixDef.userData = "line";
+			    fixDef.shape.SetAsArray(coords,2
+			                );
+			    body.CreateFixture(fixDef);
+			    return fixDef;
+			},
+
+			addPhysicLine : function(world, coords) {
+			    var bodyDef = new b2BodyDef;
+			    bodyDef.type = b2Body.b2_staticBody;
+			    bodyDef.position.Set(0,0);
+			    bodyDef.userData = "line";
+			    var body = world.CreateBody(bodyDef);
+			    this.addLineFixture(body, coords);
+			    return body;
 			}
+
 	}
 }());

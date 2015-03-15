@@ -9,13 +9,13 @@
 	var box2dCanvas; // canvas box2d
 	var box2dUtils; // classe utilitaire box2d
 	var context; 	// contexte 2d
-	var SCALE = 30; // échelle
+	var SCALE = 30; // Ã©chelle
 	var world;		// world box2d
 	var canvasWidth, canvasHeight;	// dimensions du canvas
 	
 	// Gestion de la souris
 	var curr_line = null;
-	var isMouseDown = false; // le clic est-il enfoncé ?
+	var isMouseDown = false; // le clic est-il enfoncÃ© ?
 	var canvasPosition; // la position du canvas
 
 	var b2Vec2 = Box2D.Common.Math.b2Vec2;
@@ -40,33 +40,33 @@
 	
 	// Fonction d'initialisation
 	this.init = function() {
-		prepareStage();		// préparer l'environnement graphique
-		prepareBox2d();		// préparer l'environnement physique
+		prepareStage();		// prÃ©parer l'environnement graphique
+		prepareBox2d();		// prÃ©parer l'environnement physique
 		
 		// Graphics
 		background = new Background(stage, SCALE);
 		
 		// Physics
 		addLines();
-		addPigs();			// ajout d'éléments physiques dynamiques (pigs)
+		addPigs();			// ajout d'Ã©lÃ©ments physiques dynamiques (pigs)
 
-		// Créer le player
+		// CrÃ©er le player
 		player = new Player(stage, SCALE);
 		player.createPlayer(world, 25, canvasHeight-30, 20);
 
 		// Ajouter le listener de collisions
 		addContactListener();
 
-		// Ajouter les listeners d'événements souris	
+		// Ajouter les listeners d'Ã©vÃ©nements souris	
 		window.addEventListener('mousedown', handleMouseDown);
 		window.addEventListener('mouseup', handleMouseUp);
 		
-		// Ajouter les listeners d'évènements
+		// Ajouter les listeners d'Ã©vÃ¨nements
 		window.addEventListener('keydown', handleKeyDown);
 		window.addEventListener('keyup', handleKeyUp);
 		
 
-		// Désactiver les scrollings vertical lors d'un appui sur les touches directionnelles "haut" et "bas"
+		// DÃ©sactiver les scrollings vertical lors d'un appui sur les touches directionnelles "haut" et "bas"
 		document.onkeydown = function(event) {
 			return event.keyCode != 38 && event.keyCode != 40;
 		}
@@ -77,17 +77,17 @@
 		startTicker(30);	// lancer le ticker
 	};
 	
-	// Préparer l'environnement graphique
+	// PrÃ©parer l'environnement graphique
 	this.prepareStage = function() {
-		// récupérer le canvas GIP
+		// rÃ©cupÃ©rer le canvas GIP
 		gipCanvas = $('#gipCanvas').get(0);
-		// créer le Stage
+		// crÃ©er le Stage
 		stage = new createjs.Stage(gipCanvas);
 		// Classe utilitaire EaselJS
 		easelJsUtils = new EaselJsUtils(stage);
 	};
 	
-	// Préparer l'environnement physique
+	// PrÃ©parer l'environnement physique
 	this.prepareBox2d = function() {
 		box2dCanvas = $('#box2dCanvas').get(0);
 		canvasWidth = parseInt(box2dCanvas.width);
@@ -96,43 +96,50 @@
 		context = box2dCanvas.getContext('2d');
 		box2dUtils = new Box2dUtils(SCALE);
 		world = box2dUtils.createWorld(context); // box2DWorld
-		setWorldBounds(); // définir les limites de l'environnement
+		setWorldBounds(); // dÃ©finir les limites de l'environnement
 	};
 	
-	// Créer les limites de l'environnement
+	// CrÃ©er les limites de l'environnement
 	this.setWorldBounds = function() {
-		// Créer le "sol" et le "plafond" de notre environnement physique
+		// CrÃ©er le "sol" et le "plafond" de notre environnement physique
 		ground = box2dUtils.createBox(world, 400, canvasHeight - 10, 400, 10, null, true, 'ground');
 		ceiling = box2dUtils.createBox(world, 400, -5, 400, 1, null, true, 'ceiling');
 		
-		// Créer les "murs" de notre environnement physique
+		// CrÃ©er les "murs" de notre environnement physique
 		leftWall = box2dUtils.createBox(world, -5, canvasHeight, 1, canvasHeight, null, true, 'leftWall');
 		leftWall = box2dUtils.createBox(world, canvasWidth + 5, canvasHeight, 1, canvasHeight, null, true, 'leftWall');
 	};
 
+	this.addLine = function(coords){
+		var line = new Line(box2dUtils, world, stage, SCALE, coords);
+		lines.push(line);
+		LINES = lines
+		return line;
+	}
+
 	this.addLines = function() {
-		var line = new Line(stage, SCALE, [{x:10,y:15},{x:15,y:20}]);
+		var line = this.addLine([{x:10,y:18},{x:15,y:20}]);
 	};
 
 	// Ajout des cochons
 	this.addPigs = function() {
-		// Créer 30 "Pigs" placés aléatoirement dans l'environnement
+		// CrÃ©er 30 "Pigs" placÃ©s alÃ©atoirement dans l'environnement
 		for (var i=0; i<5; i++) {
 			var pig = box2dUtils.createPig(world, stage, Math.random() * canvasWidth, Math.random() * canvasHeight - 400 / SCALE);
 			pigs.push(pig);	// conserver les cochons dans un tableau
 		}
 	};
 
-	// Démarrer le ticker
+	// DÃ©marrer le ticker
 	this.startTicker = function(fps) {
 		Ticker.setFPS(fps);
 		Ticker.addEventListener("tick", tick);
 	};
 	
-	// Mise à jour de l'environnement
+	// Mise Ã  jour de l'environnement
 	this.tick = function() {
 		
-		// Mettre à jour les cochons
+		// Mettre Ã  jour les cochons
 		for (var i=0; i < pigs.length; i++) {
 			pigs[i].update();
 		}
@@ -142,7 +149,7 @@
 		world.DrawDebugData();
 		world.ClearForces();
 
-		// gérer les interactions avec le player
+		// gÃ©rer les interactions avec le player
 		handleInteractions();
 		player.update();	
 
@@ -160,7 +167,7 @@
 		keys[evt.keyCode] = false;
 	}
 
-	// Gérer les interactions
+	// GÃ©rer les interactions
 	this.handleInteractions = function() {
 		// touche "haut"
 		if (keys[38]) {
@@ -174,25 +181,26 @@
 		}	
 	}
 
-	// Déterminer si l'objet physique est le player
+	// DÃ©terminer si l'objet physique est le player
 	this.isPlayer = function(object) {
 		if (object != null && object.GetUserData() != null) {
 			return object.GetUserData() == 'player';
 		}
 	}
 	
-	// Déterminer si l'objet physique est les pieds du player
+	// DÃ©terminer si l'objet physique est les pieds du player
 	this.isFootPlayer = function(object) {
 		if (object != null && object.GetUserData() != null) {
 			return object.GetUserData() == 'footPlayer';
 		}
 	}
 	
-	// Déterminer si l'objet physique est le sol ou une box
+	// DÃ©terminer si l'objet physique est le sol ou une box
 	this.isGroundOrBox = function(object) {
 		if (object != null && object.GetUserData() != null) {
 			return (object.GetUserData() == 'box'
 				 || object.GetUserData() == 'ground' 
+				 || object.GetUserData() == 'line' 
 				 || object.GetUserData() == 'pig'
 				 || object.GetUserData() == 'shortTree');
 		}
@@ -208,7 +216,7 @@
 	this.handleMouseDown = function(evt) {
 		isMouseDown = true;
 		var pos = this.mouseCoords(evt);
-		curr_line = new Line(stage, SCALE, [pos,pos]);
+		curr_line = this.addLine([pos,pos]);
 		handleMouseMove(evt);
 		window.addEventListener('mousemove', handleMouseMove);
 	}
@@ -261,7 +269,7 @@
 		//Add listeners for contact
 		var listener = new b2Listener;
 		
-		// Entrée en contact
+		// EntrÃ©e en contact
 		listener.BeginContact = function(contact) {
 			var obj1 = contact.GetFixtureA();
 			var obj2 = contact.GetFixtureB();
