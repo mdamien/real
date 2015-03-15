@@ -21,7 +21,6 @@
 
 			this.skin = bitmap;
 		},
-		
 	};
 	
 }());

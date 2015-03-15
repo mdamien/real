@@ -27,13 +27,14 @@
 	
 	var lines = [];
 
-	var viewport = {
+	var vp = {
 		x:0,
-		y:0
+		y:0,
+		container: new createjs.Container(),
 	}
 
 	// debug box2d ?
-	var box2dDebug = true;
+	var box2dDebug = false;
 	
 	var player = null, background = null;
 	var keys = [];
@@ -49,14 +50,14 @@
 		prepareBox2d();		// préparer l'environnement physique
 		
 		// Graphics
-		background = new Background(stage, SCALE);
+		background = new Background(vp.container, SCALE);
 		
 		// Physics
 		addLines();
 		addPigs();			// ajout d'éléments physiques dynamiques (pigs)
 
 		// Créer le player
-		player = new Player(stage, SCALE);
+		player = new Player(vp.container, SCALE);
 		player.createPlayer(world, 25, canvasHeight-30, 20);
 
 		// Ajouter le listener de collisions
@@ -90,6 +91,7 @@
 		stage = new createjs.Stage(gipCanvas);
 		// Classe utilitaire EaselJS
 		easelJsUtils = new EaselJsUtils(stage);
+		stage.addChild(vp.container)
 	};
 	
 	// Préparer l'environnement physique
@@ -116,7 +118,7 @@
 	};
 
 	this.addLine = function(coords){
-		var line = new Line(box2dUtils, world, stage, SCALE, coords);
+		var line = new Line(box2dUtils, world, vp.container, SCALE, coords);
 		lines.push(line);
 		return line;
 	}
@@ -129,7 +131,7 @@
 	this.addPigs = function() {
 		// Créer 30 "Pigs" placés aléatoirement dans l'environnement
 		for (var i=0; i<5; i++) {
-			var pig = box2dUtils.createPig(world, stage, Math.random() * canvasWidth, Math.random() * canvasHeight - 400 / SCALE);
+			var pig = box2dUtils.createPig(world, vp.container, Math.random() * canvasWidth, Math.random() * canvasHeight - 400 / SCALE);
 			pigs.push(pig);	// conserver les cochons dans un tableau
 		}
 	};
@@ -143,25 +145,25 @@
 	// Mise à jour de l'environnement
 	this.tick = function() {
 		
-		// Mettre à jour les cochons
-		for (var i=0; i < pigs.length; i++) {
-			pigs[i].update();
-		}
-		
 		// box2d
 		world.Step(1 / 15,  10, 10);
 		world.DrawDebugData();
 		world.ClearForces();
 
-		// gérer les interactions avec le player
 		handleInteractions();
 		player.update();	
 
-		// easelJS
-		viewport.x = player.skin.x-canvasWidth/2;
-		viewport.y = player.skin.y-canvasHeight/2;
-		//stage.x = viewport.x;
-		//stage.y = viewport.y
+		for (var i=0; i < pigs.length; i++) {
+			pigs[i].update();
+		}
+		
+
+		vp.x = player.skin.x-canvasWidth/2;
+		vp.y = player.skin.y-canvasHeight/2;
+
+		vp.container.x = -vp.x;
+		vp.container.y = -vp.y;
+
 		stage.update();
 	};
 
@@ -216,8 +218,8 @@
 
 	this.mouseCoords = function(evt){
 		return {
-			x: (evt.clientX - canvasPosition.left) / SCALE,
-			y: (evt.clientY - canvasPosition.top) / SCALE
+			x: (evt.clientX - canvasPosition.left + vp.x) / SCALE,
+			y: (evt.clientY - canvasPosition.top + vp.y) / SCALE
 		}
 	}
 
