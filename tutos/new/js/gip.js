@@ -57,7 +57,7 @@
 		addShortTrees();	// ajout d'éléments physiques statiques (short trees)
 		
 		// Créer le player
-		player = new Player(SCALE);
+		player = new Player(stage, SCALE);
 		player.createPlayer(world, 25, canvasHeight-30, 20);
 
 		// Ajouter le listener de collisions
@@ -71,7 +71,7 @@
 		window.addEventListener('keydown', handleKeyDown);
 		window.addEventListener('keyup', handleKeyUp);
 		
-		
+
 		// Désactiver les scrollings vertical lors d'un appui sur les touches directionnelles "haut" et "bas"
 		document.onkeydown = function(event) {
 			return event.keyCode != 38 && event.keyCode != 40;
@@ -202,6 +202,7 @@
 
 		// gérer les interactions
 		handleInteractions();
+		player.update();
 		
 		// box2d
 		world.Step(1 / 15,  10, 10);
@@ -253,7 +254,10 @@
 	// Déterminer si l'objet physique est le sol ou une box
 	this.isGroundOrBox = function(object) {
 		if (object != null && object.GetUserData() != null) {
-			return (object.GetUserData() == 'box' || object.GetUserData() == 'ground');
+			return (object.GetUserData() == 'box'
+				 || object.GetUserData() == 'ground' 
+				 || object.GetUserData() == 'pig'
+				 || object.GetUserData() == 'shortTree');
 		}
 	}
 	
