@@ -90,6 +90,7 @@
 				return this.createBitmap("img/Rock.png", x, y, options);
 			},
 			
+
 			/**
 			 * Créer une image "Cochon"
 			 * @param Number x : position x

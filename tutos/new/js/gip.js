@@ -27,13 +27,11 @@
 	
 	// pigs
 	var pigs = [];
-	// clouds
-	var clouds = [];
 	
 	// debug box2d ?
 	var box2dDebug = true;
 	
-	var player = null;
+	var player = null, background = null;
 	var keys = [];
 
 	// Initialisation
@@ -47,15 +45,11 @@
 		prepareBox2d();		// préparer l'environnement physique
 		
 		// Graphics
-		addRoundRects();	// ajout des "rectangles"
-		addCircles();		// ajout des "cercles"
-		addGrass();			// ajout d'éléments "grass"
-		addClouds();		// ajout d'éléments "clouds"
+		background = new Background(stage, SCALE);
 		
 		// Physics
 		addPigs();			// ajout d'éléments physiques dynamiques (pigs)
-		addShortTrees();	// ajout d'éléments physiques statiques (short trees)
-		
+
 		// Créer le player
 		player = new Player(stage, SCALE);
 		player.createPlayer(world, 25, canvasHeight-30, 20);
@@ -116,50 +110,15 @@
 		leftWall = box2dUtils.createBox(world, canvasWidth + 5, canvasHeight, 1, canvasHeight, null, true, 'leftWall');
 	};
 	
-	// Ajouter les formes "rectangles coins arrondis"
-	this.addRoundRects = function() {
-		easelJsUtils.createRoundRect(50, 100, 100, 600, [65, 136, 178], {opacity: 0.2});
-		easelJsUtils.createRoundRect(-20, 210, 100, 400, [106, 10, 171], {opacity: 0.1, radius: 30});
-		easelJsUtils.createRoundRect(300, 210, 100, 400, [65, 136, 178], {opacity: 0.4, radius: 30});
-		easelJsUtils.createRoundRect(330, 410, 100, 200, [65, 136, 178], {opacity: 0.2, radius: 30});
-	};
-	
-	// Ajouter les formes "cercles"
-	this.addCircles = function() {
-		easelJsUtils.createCircle(750, 350, 250, [65, 136, 178], {opacity: 0.4});
-		easelJsUtils.createCircle(550, 550, 100, [106, 10, 171], {opacity: 0.2});
-		easelJsUtils.createCircle(50, 500, 200, [65, 136, 178], {opacity: 0.5});
-	};
-	
-	// Ajout des nuages
-	this.addClouds = function() {
-		clouds.push(easelJsUtils.createCloud(10, 20));
-		clouds.push(easelJsUtils.createCloud(500, 100, {scale:[0.7, 0.7]}));		
-	};
-	
 	// Ajout des cochons
 	this.addPigs = function() {
 		// Créer 30 "Pigs" placés aléatoirement dans l'environnement
-		for (var i=0; i<30; i++) {
+		for (var i=0; i<5; i++) {
 			var pig = box2dUtils.createPig(world, stage, Math.random() * canvasWidth, Math.random() * canvasHeight - 400 / SCALE);
 			pigs.push(pig);	// conserver les cochons dans un tableau
 		}
 	};
-	
-	// Ajout des buissons
-	this.addShortTrees = function() {
-		box2dUtils.createShortTree(world, stage, 300, 400);
-		box2dUtils.createShortTree(world, stage, 100, 100);
-		box2dUtils.createShortTree(world, stage, 650, 250);
-	};
-	
-	// Ajout des blocs "herbe"
-	this.addGrass = function() {
-		for (var i = -30; i<830; i+=101) {
-			easelJsUtils.createGrassBlock(i, 530);
-		}
-	};
-	
+
 	// Démarrer le ticker
 	this.startTicker = function(fps) {
 		Ticker.setFPS(fps);
@@ -173,15 +132,7 @@
 		for (var i=0; i < pigs.length; i++) {
 			pigs[i].update();
 		}
-		
-		// Mettre à jour les nuages
-		clouds.forEach(function(cloud){
-			cloud.x += 2;
-			if (cloud.x > 900) {
-				cloud.x = -500;
-			}
-		});
-		
+
 		// Mouse Down et pas de liaison
 		if (isMouseDown && (!mouseJoint)) {
 			var body = getBodyAtMouse();
@@ -199,16 +150,16 @@
             	mouseJoint = null;
             }
         }
-
-		// gérer les interactions
-		handleInteractions();
-		player.update();
 		
 		// box2d
 		world.Step(1 / 15,  10, 10);
 		world.DrawDebugData();
 		world.ClearForces();
 		
+
+		// gérer les interactions avec le player
+		handleInteractions();
+		player.update();	
 		// easelJS
 		stage.update();
 	};

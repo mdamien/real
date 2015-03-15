@@ -15,16 +15,16 @@
 		this.jumpContacts = 0;						// compteur de "contacts" pour le saut
 
 
-		var bitmap = new createjs.Bitmap("img/pig.png");	// image associée
+		var bitmap = new createjs.Bitmap("img/bird.png");	// image associée
 		// Positionner l'image
 		bitmap.x = this.x;
 		bitmap.y = this.y;
 		// Redimensionner l'image
-		bitmap.scaleX = 0.8;
-		bitmap.scaleY = 0.6;
+		bitmap.scaleX = 0.1;
+		bitmap.scaleY = 0.1;
 		// Repositionner le centre de l'image
-		bitmap.regX = 45;
-		bitmap.regY = 50;
+		bitmap.regX = 250;
+		bitmap.regY = 200;
 		// Ajouter l'image au Stage
 		this.stage.addChild(bitmap);
 		// Appliquer la représentation graphique à l'objet
