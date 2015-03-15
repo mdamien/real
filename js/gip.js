@@ -26,6 +26,8 @@
 	var pigs = [];
 	
 	var lines = [];
+	var lines_parent = new createjs.Container();
+	var editing_mode = true;
 
 	var vp = {
 		x:0,
@@ -109,22 +111,24 @@
 	// Créer les limites de l'environnement
 	this.setWorldBounds = function() {
 		// Créer le "sol" et le "plafond" de notre environnement physique
-		ground = box2dUtils.createBox(world, 400, canvasHeight - 10, 400, 10, null, true, 'ground');
-		ceiling = box2dUtils.createBox(world, 400, -5, 400, 1, null, true, 'ceiling');
+		//ground = box2dUtils.createBox(world, 400, canvasHeight - 10, 400, 10, null, true, 'ground');
+		//ceiling = box2dUtils.createBox(world, 400, -5, 400, 1, null, true, 'ceiling');
 		
 		// Créer les "murs" de notre environnement physique
-		leftWall = box2dUtils.createBox(world, -5, canvasHeight, 1, canvasHeight, null, true, 'leftWall');
-		leftWall = box2dUtils.createBox(world, canvasWidth + 5, canvasHeight, 1, canvasHeight, null, true, 'leftWall');
+		//leftWall = box2dUtils.createBox(world, -5, canvasHeight, 1, canvasHeight, null, true, 'leftWall');
+		//leftWall = box2dUtils.createBox(world, canvasWidth + 5, canvasHeight, 1, canvasHeight, null, true, 'leftWall');
 	};
 
 	this.addLine = function(coords){
-		var line = new Line(box2dUtils, world, vp.container, SCALE, coords);
+		var line = new Line(box2dUtils, world, lines_parent, SCALE, coords);
 		lines.push(line);
+		LINES = lines;
 		return line;
 	}
 
 	this.addLines = function() {
-		//var line = this.addLine([{x:10,y:18},{x:15,y:20}]);
+		vp.container.addChild(lines_parent);
+		LINES.map(addLine);
 	};
 
 	// Ajout des cochons
@@ -147,7 +151,6 @@
 		
 		// box2d
 		world.Step(1 / 15,  10, 10);
-		world.DrawDebugData();
 		world.ClearForces();
 
 		handleInteractions();
@@ -164,12 +167,18 @@
 		vp.container.x = -vp.x;
 		vp.container.y = -vp.y;
 
+		world.DrawDebugData();
 		stage.update();
 	};
 
 	// appuyer sur une touche
 	this.handleKeyDown = function(evt) {
 		keys[evt.keyCode] = true;
+
+		if(evt.keyCode == 69){
+			editing_mode = !editing_mode;
+			lines_parent.visible = editing_mode;
+		}
 	}
 
 	// relacher une touche

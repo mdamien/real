@@ -570,7 +570,7 @@
 			    var fixDef = new b2FixtureDef;
 			    fixDef.shape = new b2PolygonShape;
 			    fixDef.density = 1.0;
-			    fixDef.friction = 0.5;
+			    fixDef.friction = 1.0;
 			    fixDef.restitution = .5;
 			    fixDef.userData = "line";
 			    fixDef.shape.SetAsArray(coords,2

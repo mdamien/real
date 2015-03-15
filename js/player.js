@@ -1,7 +1,5 @@
 (function(){
 	
-	// Import des "classes" box2dWeb
-	var b2Vec2 = Box2D.Common.Math.b2Vec2;
 	
 	/**
 	 * Constructeur
@@ -60,7 +58,6 @@
 			}
 		},
 		
-		
 		/**
 		 * Effectuer un déplacement vers la droite
 		 */
@@ -78,11 +75,9 @@
 		},
 
 		update: function() {
-			// Redéfinir l'orientation
-			this.skin.rotation = this.body.GetBody().GetAngle() * (180 / Math.PI);
-			// Repositionner l'objet
 			this.skin.x = this.body.GetBody().GetWorldCenter().x * this.scale;
 			this.skin.y = this.body.GetBody().GetWorldCenter().y * this.scale;
+			this.skin.scaleX = (this.body.GetBody().GetLinearVelocity().x > 0 ? 1 : -1)*0.1;
 		}
 	}
 }());
