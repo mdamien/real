@@ -2,9 +2,9 @@
 
 LATER
 - fullscreen
-- img load
-- correct mouse coords with scrol
-- box2d debug transalte
+- img preload
+- correct mouse coords with scroll
+- box2d debug translate with viewport
 - remove french comments
 
 - react editing interface: world scale, gravity, lines, background, save, load, player pos, goal, coins, ...

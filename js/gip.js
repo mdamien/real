@@ -27,7 +27,9 @@
 	
 	var lines = [];
 	var lines_parent = new createjs.Container();
-	var editing_mode = false
+	var editing_mode = false;
+	lines_parent.visible = editing_mode;
+	
 	var vp = {
 		x:0,
 		y:0,
