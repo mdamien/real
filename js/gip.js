@@ -12,7 +12,7 @@
 	var SCALE = 30; // échelle
 	var world;		// world box2d
 	var canvasWidth, canvasHeight;	// dimensions du canvas
-	
+
 	// Gestion de la souris
 	var curr_line = null;
 	var isMouseDown = false; // le clic est-il enfoncé ?
@@ -26,6 +26,11 @@
 	var pigs = [];
 	
 	var lines = [];
+
+	var viewport = {
+		x:0,
+		y:0
+	}
 
 	// debug box2d ?
 	var box2dDebug = true;
@@ -113,12 +118,11 @@
 	this.addLine = function(coords){
 		var line = new Line(box2dUtils, world, stage, SCALE, coords);
 		lines.push(line);
-		LINES = lines
 		return line;
 	}
 
 	this.addLines = function() {
-		var line = this.addLine([{x:10,y:18},{x:15,y:20}]);
+		//var line = this.addLine([{x:10,y:18},{x:15,y:20}]);
 	};
 
 	// Ajout des cochons
@@ -154,6 +158,10 @@
 		player.update();	
 
 		// easelJS
+		viewport.x = player.skin.x-canvasWidth/2;
+		viewport.y = player.skin.y-canvasHeight/2;
+		//stage.x = viewport.x;
+		//stage.y = viewport.y
 		stage.update();
 	};
 

@@ -16,10 +16,28 @@
 		
 		init: function() {
 			var line = new createjs.Shape();
-			if(this.coords[0] != this.coords[1]){
-				this.body = this.box2dUtils.addPhysicLine(
-					this.world,this.coords)
+			this.stage.addChild(line);
+			this.skin = line;
+			this.update_graphics();
+			this.update_physics();
+
+		},
+
+		update_physics: function(){
+			if(this.body == null){
+				if(this.coords[0].x != this.coords[1].x){
+					this.body = this.box2dUtils.addPhysicLine(
+						this.world,this.coords)
+				}
+			}else{
+				this.body.DestroyFixture(this.body.GetFixtureList())
+				this.box2dUtils.addLineFixture(this.body, this.coords)
 			}
+		},
+
+		update_graphics: function(){
+			var line = this.skin;
+			line.graphics.clear();
 			line.graphics.setStrokeStyle(3);
 			line.graphics.beginStroke('red');
 			line.graphics.moveTo(this.coords[0].x*this.scale,
@@ -33,24 +51,8 @@
 
 		setEnd: function(end) {
 			this.coords[1] = end;
-			if(this.body == null){
-				if(this.coords[0].x != this.coords[1].x){
-					this.body = this.box2dUtils.addPhysicLine(
-						this.world,this.coords)
-				}
-			}else{
-				this.body.DestroyFixture(this.body.GetFixtureList())
-				this.box2dUtils.addLineFixture(this.body, this.coords)
-			}
-			var line = this.skin;
-			line.graphics.clear();
-			line.graphics.setStrokeStyle(3);
-			line.graphics.beginStroke('red');
-			line.graphics.moveTo(this.coords[0].x*this.scale,
-					this.coords[0].y*this.scale);
-			line.graphics.lineTo(this.coords[1].x*this.scale,
-					this.coords[1].y*this.scale);
-			line.graphics.endStroke();
+			this.update_physics();
+			this.update_graphics();
 		},
 	};
 	

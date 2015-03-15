@@ -14,8 +14,8 @@
 			bitmap.x = 0;
 			bitmap.y = 0;
 
-			bitmap.scaleX = 0.3;
-			bitmap.scaleY = 0.3;
+			bitmap.scaleX = 0.35;
+			bitmap.scaleY = 0.35;
 
 			this.stage.addChild(bitmap);
 

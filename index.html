@@ -1,157 +1,37 @@
-<html>
-   <head>
-      <title>Real</title>
-      <style type="text/css">body { margin:0; } canvas {  margin:auto;}</style>
-   </head>
-   <body onload="init();">
-      <canvas id="canvas" width="800" height="500" style="background-color:#333333;" ></canvas>
-   </body
->   <script type="text/javascript" src="js/box2d.js"></script>
-   <script type="text/javascript" src="js/box_utils.js"></script>
-   <script type="text/javascript">
-var C = {};
-var world, ctx, cvs, player, SCALE = 30;
-var prev_mX = -1,prev_mY = -1;
-var debug = false, editing = true;
+<!doctype html>
+<html lang="fr">
+<head>
+	<meta charset="utf-8">
+	<title>Real</title>
+	<link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+<div id="divCanvas">
+	<canvas width="800" height="600" id="gipCanvas"></canvas>
+	<canvas width="800" height="600" id="box2dCanvas"></canvas>
+</div>
 
-var speed = 0.01;
+<div id="divBtnDebug">
+	<button id="btnB2d">Afficher / Masquer Debug Box2d</button>
+</div>
 
-var keys_pressed  = {
-	'right': false,
-	'left': false,
-}
+<!-- Import JS -->
+<script src="libs/Box2dWeb-2.1.a.3.min.js"></script>
+<script src="libs/easeljs-0.7.1.min.js"></script>
+<script src="libs/jquery-1.9.0.min.js"></script>
+<!-- Classe utilitaire box2dWeb -->
+<script src="js/box2dutils.js"></script>
+<!-- Classe utilitaire easeljs -->
+<script src="js/easelJsUtils.js"></script>
+<!-- Eléments physiques -->
+<script src="js/background.js"></script>
+<script src="js/line.js"></script>
+<script src="js/pig.js"></script>
+<script src="js/shortTree.js"></script>
+<script src="js/player.js"></script>
+<!-- Moteur du jeu -->
+<script src="js/gip.js"></script>
 
-var LINES_HARDCODED = [
-[{"x":3.8333333333333335,"y":8.166666666666666},{"x":4.433333333333334,"y":7.6}],[{"x":4.433333333333334,"y":7.6},{"x":5.8,"y":7.333333333333333}],[{"x":5.8,"y":7.333333333333333},{"x":7.166666666666667,"y":6.9}],[{"x":7.166666666666667,"y":6.9},{"x":8.066666666666666,"y":6.9}],[{"x":8.066666666666666,"y":6.9},{"x":9.066666666666666,"y":7}],[{"x":9.066666666666666,"y":7},{"x":10.033333333333333,"y":7}],[{"x":10.033333333333333,"y":7},{"x":11.233333333333333,"y":7.033333333333333}],[{"x":11.233333333333333,"y":7.033333333333333},{"x":11.133333333333333,"y":7.6}],[{"x":0.2,"y":15},{"x":26.333333333333332,"y":14.266666666666667}],[{"x":26.333333333333332,"y":14.266666666666667},{"x":26.433333333333334,"y":0.13333333333333333}],[{"x":26.433333333333334,"y":0.13333333333333333},{"x":0.26666666666666666,"y":0.1}],[{"x":0.26666666666666666,"y":0.1},{"x":0.2,"y":14.933333333333334}],[{"x":9.966666666666667,"y":14.633333333333333},{"x":9.866666666666667,"y":13.9}],[{"x":9.866666666666667,"y":13.9},{"x":9.666666666666666,"y":13.2}],[{"x":9.666666666666666,"y":13.2},{"x":10.033333333333333,"y":12.5}],[{"x":10.033333333333333,"y":12.5},{"x":10.366666666666667,"y":12.5}],[{"x":10.366666666666667,"y":12.5},{"x":11.166666666666666,"y":12.566666666666666}],[{"x":11.166666666666666,"y":12.566666666666666},{"x":11.2,"y":13.766666666666667}],[{"x":11.2,"y":13.766666666666667},{"x":11.266666666666667,"y":14.433333333333334}],[{"x":11.266666666666667,"y":14.433333333333334},{"x":13.1,"y":14.433333333333334}],[{"x":13.1,"y":14.433333333333334},{"x":13.166666666666666,"y":11.466666666666667}],[{"x":13.166666666666666,"y":11.466666666666667},{"x":15.1,"y":11.4}],[{"x":15.1,"y":11.4},{"x":15.066666666666666,"y":14.4}],[{"x":11.3,"y":8.766666666666667},{"x":10.233333333333333,"y":8.6}],[{"x":10.233333333333333,"y":8.6},{"x":12.866666666666667,"y":8.133333333333333}],[{"x":12.866666666666667,"y":8.133333333333333},{"x":10.666666666666666,"y":8.233333333333333}],[{"x":10.666666666666666,"y":8.233333333333333},{"x":10.533333333333333,"y":8.466666666666667}]
-]
 
-var LINES = []
-
-function addLine(a,b){
-    LINES.push([a,b]);
-    addPhysicLine(a,b);
-}
-
-function init() {
-    cvs = document.getElementById('canvas');
-    ctx = cvs.getContext('2d');
-    world = new b2World(new b2Vec2(0, 10) /*gravity*/,true /*sleep*/);
-
-    LINES_HARDCODED.forEach(function(x){
-	    addLine(x[0],x[1]);
-    })
-
-    //setup debug draw
-    var debugDraw = new b2DebugDraw();
-       debugDraw.SetSprite(ctx);
-       debugDraw.SetDrawScale(SCALE);
-       debugDraw.SetFillAlpha(0.3);
-       debugDraw.SetLineThickness(1.0);
-       debugDraw.SetFlags(b2DebugDraw.e_shapeBit | b2DebugDraw.e_jointBit);
-       world.SetDebugDraw(debugDraw);
-
-    document.addEventListener("mousedown", function(e) {
-    	coords = canvas.relMouseCoords(e);
-        var mouseX = coords.x/SCALE;
-        var mouseY = coords.y/SCALE;
-        if(e.button === 0){ //left click)
-	        if(prev_mX != -1){
-	            addLine(new b2Vec2(prev_mX,prev_mY), new b2Vec2(mouseX, mouseY));
-	        }
-	    }
-        prev_mX = mouseX;
-        prev_mY = mouseY;
-    }, true)
-
-    document.addEventListener("contextmenu", function(e) {
-        e.preventDefault();
-    }, false);
-
-    document.addEventListener("keydown", function(e){
-        //console.log(e);
-        switch(e.keyCode) {
-            case 32://space
-                editing = !editing;
-                e.preventDefault()
-                break;
-            case 38://up
-                player.m_body.ApplyImpulse(new b2Vec2(0,5), player.m_body.GetLocalCenter())
-                break;
-            case 39:
-            	keys_pressed['right'] = true
-                break;
-            case 37:
-            	keys_pressed['left'] = true
-                break;
-        }
-    })
-    document.addEventListener("keyup", function(e){
-        switch(e.keyCode) {
-            case 39:
-            	keys_pressed['right'] = false
-                break;
-            case 37:
-            	keys_pressed['left'] = false
-                break;
-        }
-    })
-
-    player = createPlayer(6,4);
-
-    //image loading
-    var images_to_load = 2;
-    var img_loading_counter = 0;
-
-    function lauch_if_loaded(){
-      img_loading_counter += 1;
-      console.log("loading: "+img_loading_counter+"/"+images_to_load)
-      if(images_to_load <= img_loading_counter){
-        tick();
-      }
-    }
-
-    C.bg = new Image();
-    C.bg.onload = function() { lauch_if_loaded(); }
-    C.bg.src = "bg.jpg";
-    C.bike = new Image();
-    C.bike.onload = function() { lauch_if_loaded(); }
-    C.bike.src = "img/bike.png";
-}
-
-function draw() {
-    ctx.clearRect ( 0 , 0 , cvs.width, cvs.height );
-    ctx.drawImage(C.bg,0,0, C.bg.width/4, C.bg.height/4);
-    if(editing){
-        LINES.forEach(function(x){
-        var a = x[0], b = x[1];
-        ctx.beginPath();
-        ctx.moveTo(a.x*SCALE,a.y*SCALE);
-        ctx.lineTo(b.x*SCALE,b.y*SCALE);
-        ctx.stroke();
-      })
-    }
-    var player_pos = player.m_body.GetWorldPoint(new b2Vec2(0,0))
-    ctx.drawImage(C.bike, player_pos.x * SCALE, player_pos.y * SCALE)
-
-    ctx.beginPath();ctx.moveTo(0,0);ctx.lineTo(0,0);ctx.stroke(); //fix WTF bug where nothing is drawing except the player when no lines are drawn
-}
-
-function tick() {
-  requestAnimationFrame(tick, 1000/60 );
-
-  var pos = player.m_body.GetPosition();
-  if(keys_pressed['left']){
-  	pos.x -= speed;
-  }
-  if(keys_pressed['right']){
-  	pos.x += speed;
-  }
-  player.m_body.SetPosition(pos)
-
-  draw();
-  world.Step(1 / 60, 10, 10);
-  world.ClearForces();
-};
-      
-   </script>
+</body>
 </html>
