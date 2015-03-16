@@ -1,6 +1,17 @@
 body, html {
 	background-color: #333;
 }
+#loading {
+	display: none;
+	color: white;
+    float: left;
+    font: 2em sans-serif;
+    position: absolute;
+    text-align: center;
+    top: 10px;
+    width: 100%;
+    z-index: 100;
+}
 #divCanvas {
 	width: 800px;
 	height: 600px;

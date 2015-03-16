@@ -10,7 +10,7 @@
 	Background.prototype = {
 		
 		init: function() {
-			var bitmap = new createjs.Bitmap(this.options.src);
+			var bitmap = new createjs.Bitmap(this.options.img);
 
 			bitmap.x = 0;
 			bitmap.y = 0;

@@ -2,15 +2,14 @@
 	
 	
 	var Ticker = createjs.Ticker;
-	var gipCanvas;				
-	var stage;					
-	
+	var gipCanvas;
+	var stage;
 	
 	var box2dCanvas; 
 	var box2dUtils; 
-	var context; 	
+	var context;
 	var SCALE = 30; 
-	var world;		
+	var world;
 	var canvasWidth, canvasHeight;
 
 	var curr_line = null;
@@ -38,7 +37,7 @@
 
 	var box2dDebug = false;
 
-	var lvl = LEVELS['base']
+	var lvl = LEVELS['xkcd1']
 	
 	var player = null, background = null;
 	var keys = [];
@@ -48,7 +47,9 @@
 	});
 
 	this.load = function() {
+		$('#loading').fadeIn()
 		loaded_queue.on("complete", function(){
+			$('#loading').hide()
 			init()
 		}, this);
 		loaded_queue.loadManifest([
@@ -61,12 +62,14 @@
 		prepareStage();		
 		prepareBox2d();		
 		
+		lvl.bg.img = loaded_queue.getResult("bg");
+		console.log(lvl.bg.img)
 		background = new Background(vp.container, SCALE, lvl.bg);
 		
 		addLines();
 		
 		player = new Player(vp.container, SCALE);
-		player.createPlayer(world, 100, canvasHeight-40, 20);
+		player.createPlayer(world, lvl.player.start.x*SCALE, lvl.player.start.y*SCALE, 20);
 
 		addContactListener();
 
@@ -86,7 +89,6 @@
 	
 	
 	this.prepareStage = function() {
-		
 		gipCanvas = $('#gipCanvas').get(0);
 		
 		stage = new createjs.Stage(gipCanvas);
@@ -114,7 +116,7 @@
 
 	this.addLines = function() {
 		vp.container.addChild(lines_parent);
-		//lvl.lines.map(addLine);
+		lvl.lines.map(addLine);
 
 		//world bounds
 		var bg = loaded_queue.getResult("bg");
