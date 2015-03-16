@@ -45,11 +45,14 @@
 	var editing_mode = URL_PARAMS['editor'];
 	lines_parent.visible = editing_mode;
 
+	var free_move_camera = true;
+
 	var loaded_queue = new createjs.LoadQueue();
 
 	var vp = {
 		x:0,
 		y:0,
+		zoom:1,
 		container: new createjs.Container(),
 	}
 
@@ -172,10 +175,10 @@
 		for (var i=0; i < pigs.length; i++) {
 			pigs[i].update();
 		}
-		
 
-		vp.x = player.skin.x-canvasWidth/2;
-		vp.y = player.skin.y-canvasHeight/2;
+		vp.x = player.skin.x-canvasWidth/2/vp.zoom;
+		vp.y = player.skin.y-canvasHeight/2/vp.zoom;
+
 		if(box2dDebug){
 			vp.x = 0;
 			vp.y = 0;
@@ -183,6 +186,9 @@
 
 		vp.container.x = -vp.x;
 		vp.container.y = -vp.y;
+
+		vp.container.scaleX = vp.zoom
+		vp.container.scaleY = vp.zoom
 
 		if(box2dDebug){
 			world.DrawDebugData();
@@ -205,6 +211,13 @@
 		if(evt.keyCode == 80){ //p
 			var pig = box2dUtils.createPig(world, vp.container, Math.random() * canvasWidth, Math.random() * canvasHeight - 400 / SCALE);
 			pigs.push(pig);
+		}
+
+		if(evt.key == '-'){
+			vp.zoom -= 0.1;
+		}
+		if(evt.key == '+'){
+			vp.zoom += 0.1;
 		}
 	}
 
@@ -251,16 +264,28 @@
 	}
 
 	this.mouseCoords = function(evt){
+		//console.log('coord')
+		var c =  {
+			x: (evt.clientX - canvasPosition.left),
+			y: (evt.clientY - canvasPosition.top)
+		}
+		//console.log(c)
+
+		c = vp.container.globalToLocal(c.x, c.y);
+		//console.log(c)
+
 		return {
-			x: (evt.clientX - canvasPosition.left + vp.x) / SCALE,
-			y: (evt.clientY - canvasPosition.top + vp.y) / SCALE
+			x:c.x/SCALE,
+			y:c.y/SCALE,
 		}
 	}
 
 	this.handleMouseDown = function(evt) {
 		isMouseDown = true;
 		var pos = this.mouseCoords(evt);
-		curr_line = this.addLine([pos,pos]);
+		if(editing_mode){
+			curr_line = this.addLine([pos,pos]);
+		}
 		handleMouseMove(evt);
 		window.addEventListener('mousemove', handleMouseMove);
 	}
@@ -271,7 +296,9 @@
 	}
 	
 	this.handleMouseMove = function(evt) {
-		curr_line.setEnd(this.mouseCoords(evt));
+		if(editing_mode){
+			curr_line.setEnd(this.mouseCoords(evt));
+		}
 	}
 	
 	this.getBodyAtMouse = function() {
