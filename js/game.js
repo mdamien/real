@@ -194,15 +194,15 @@
 	this.handleKeyDown = function(evt) {
 		keys[evt.keyCode] = true;
 
-		if(evt.key == 'e'){
+		if(evt.keyCode == 69){ //e
 			editing_mode = !editing_mode;
 			lines_parent.visible = editing_mode;
 		}
-		if(evt.key == 'b'){
+		if(evt.keyCode == 66){ //b
 			box2dDebug = !box2dDebug;
 			this.debug_screen_on_off();
 		}
-		if(evt.key == 'p'){
+		if(evt.keyCode == 80){ //p
 			var pig = box2dUtils.createPig(world, vp.container, Math.random() * canvasWidth, Math.random() * canvasHeight - 400 / SCALE);
 			pigs.push(pig);
 		}
@@ -215,11 +215,9 @@
 
 	
 	this.handleInteractions = function() {
-		
 		if (keys[38]) {
 			player.jump();
 		}
-		
 		if (keys[37]) {
 			player.moveLeft();
 		} else if (keys[39]) {

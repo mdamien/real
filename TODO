@@ -1,11 +1,9 @@
-- correct mouse coords with scroll
-
 - editor interface (react)
 	- world scale
 	- gravity
 	- lines
 	- background
-	- save
+	- export
 	- load
 	- player pos
 	- goal
