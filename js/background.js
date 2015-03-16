@@ -16,7 +16,7 @@
         },
 
         setImage: function(img){
-            if(this.skin == null){
+            if(this.skin != null){
                 this.container.removeChild(this.skin);
             }
             this.options.img = img;

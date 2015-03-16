@@ -62,11 +62,15 @@
     var player = null, background = null;
     var keys = [];
 
+    var touch_pointers = {};
+
     $(document).ready(function() {
         load();
     });
 
     this.load = function() {
+        window.scrollTo(0,1);//hide top bar
+
         $('#loading').fadeIn()
         loaded_queue.on("complete", function(){
             $('#loading').hide()
@@ -85,6 +89,7 @@
         lvl.bg.img = loaded_queue.getResult("bg");
         background = new Background(vp.container, SCALE, lvl.bg);
         
+        this.reset_lines();
         addLines();
         
         player = new Player(vp.container, SCALE, loaded_queue.getResult('bird'));
@@ -96,19 +101,10 @@
         window.addEventListener('mouseup', handleMouseUp);
         window.addEventListener('keydown', handleKeyDown);
         window.addEventListener('keyup', handleKeyUp);
-        $('#editor-background').on('change',function (evt) {
-            var tgt = evt.target || window.event.srcElement,
-                files = tgt.files;
 
-            if (files && files.length) {
-                var fr = new FileReader();
-                fr.onload = function () {
-                    document.getElementById('bg').src = fr.result;
-                    background.setImage(fr.result);
-                }
-                fr.readAsDataURL(files[0]);
-            }
-        })
+        createjs.Touch.enable(stage);
+        stage.addEventListener('pressmove', handlePressMove);
+        stage.addEventListener('pressup', handlePressUp);
 
         window.onresize = function(){ onResize(); }
         onResize();
@@ -149,6 +145,36 @@
         world = box2dUtils.createWorld(context); 
     };
 
+    this.editor_load_bg = function(evt) {
+        var tgt = evt.target || window.event.srcElement,
+            files = tgt.files;
+
+        if (files && files.length) {
+            var fr = new FileReader();
+            fr.onload = function () {
+                document.getElementById('bg').src = fr.result;
+                background.setImage(fr.result);
+                reset_lines();
+            }
+            fr.readAsDataURL(files[0]);
+        }
+    }
+
+    this.reset_lines = function(){
+        lines.forEach(function(line){
+            line.remove();
+        });
+        lines = []
+
+        var bg = loaded_queue.getResult("bg");
+        var h = bg.height/SCALE*background.options.scale;
+        var w = bg.width/SCALE*background.options.scale;
+        addLine([{x:0, y:h},{x:w, y:h}]) //bottom
+        addLine([{x:0, y:0},{x:w, y:0}]) //top
+        addLine([{x:-0.1, y:0},{x:0, y:h}]) //left
+        addLine([{x:w+0.1, y:0},{x:w, y:h}]) //right
+    }
+
     this.addLine = function(coords){
         var line = new Line(box2dUtils, world, lines_parent, SCALE, coords);
         lines.push(line);
@@ -158,15 +184,6 @@
     this.addLines = function() {
         vp.container.addChild(lines_parent);
         lvl.lines.map(addLine);
-
-        //world bounds
-        var bg = loaded_queue.getResult("bg");
-        var h = bg.height/SCALE*background.options.scale;
-        var w = bg.width/SCALE*background.options.scale;
-        addLine([{x:0, y:h},{x:w, y:h}]) //bottom
-        addLine([{x:0, y:0},{x:w, y:0}]) //top
-        addLine([{x:-0.1, y:0},{x:0, y:h}]) //left
-        addLine([{x:w+0.1, y:0},{x:w, y:h}]) //right
     };
 
     this.addPigs = function() {
@@ -237,6 +254,9 @@
         if(evt.key == '+'){
             vp.zoom += 0.1;
         }
+        if(evt.key == 'r'){
+            this.reset_lines();
+        }
     }
 
     
@@ -246,6 +266,25 @@
 
     
     this.handleInteractions = function() {
+        for(key in touch_pointers){
+            var coords = touch_pointers[key];
+            console.log(coords)
+            var x = coords.x;
+            var y = coords.y;
+            var w_middle = canvasWidth*2/3.;
+            var w_quarter = canvasWidth/3.;
+            console.log(w_middle, w_quarter);
+            if(x < w_quarter){
+                player.moveLeft();
+            }
+            if(x > w_quarter && x < w_middle){
+                player.moveRight();
+            }
+            if(x > w_middle){
+                player.jump();
+            }
+        }
+
         if (keys[38]) {
             player.jump();
         }
@@ -282,21 +321,23 @@
     }
 
     this.mouseCoords = function(evt){
-        //console.log('coord')
         var c =  {
             x: (evt.clientX - canvasPosition.left),
             y: (evt.clientY - canvasPosition.top)
         }
-        //console.log(c)
-
         c = vp.container.globalToLocal(c.x, c.y);
-        //console.log(c)
-
         return {
             x:c.x/SCALE,
             y:c.y/SCALE,
         }
     }
+    this.touchCoords = function(evt){
+        return {
+            x: evt.stageX,
+            y: evt.stageY
+        }
+    }
+
 
     this.handleMouseDown = function(evt) {
         isMouseDown = true;
@@ -318,7 +359,15 @@
             curr_line.setEnd(this.mouseCoords(evt));
         }
     }
-    
+
+    this.handlePressMove = function(evt) {
+        touch_pointers[evt.pointerID] = this.touchCoords(evt);
+    }
+
+    this.handlePressUp = function(evt) {
+        delete touch_pointers[evt.pointerID];
+    }
+
     this.getBodyAtMouse = function() {
         selectedBody = null;
         mouseVec = new b2Vec2(mouseX, mouseY);
@@ -392,5 +441,8 @@
 
         gipCanvas.width = w;
         gipCanvas.height = h;
+
+        canvasWidth = w;
+        canvasHeight = h;
     }
 }());

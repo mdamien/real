@@ -53,6 +53,11 @@
 			this.update_physics();
 			this.update_graphics();
 		},
+
+		remove: function() {
+			this.world.DestroyBody(this.body);
+			this.stage.removeChild(this.skin);
+		}
 	};
 	
 }());

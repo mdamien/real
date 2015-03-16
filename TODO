@@ -1,6 +1,9 @@
-- load background dialog
-
-- free camera
+- real workflow
+	- take picture
+	- put it on app
+	- draw
+	- play
+	(- save & load)
 
 - editor interface (react)
 	- world scale
@@ -15,8 +18,10 @@
 	- undo
 	- remove lines
 
-- touchscreen controls
-- box2d debug translate with viewport
-
+- free camera
 
 - jetpack
+
+- animations
+- sounds
+- hud

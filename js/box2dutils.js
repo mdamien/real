@@ -155,7 +155,7 @@
 			    return fixDef;
 			},
 
-			addPhysicLine : function(world, coords) {
+			addPhysicLine: function(world, coords) {
 			    var bodyDef = new b2BodyDef;
 			    bodyDef.type = b2Body.b2_staticBody;
 			    bodyDef.position.Set(0,0);
@@ -163,7 +163,6 @@
 			    var body = world.CreateBody(bodyDef);
 			    this.addLineFixture(body, coords);
 			    return body;
-			}
-
+			},
 	}
 }());
