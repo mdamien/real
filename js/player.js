@@ -1,12 +1,12 @@
 (function(){
-    Player = function(stage, scale) {
+    Player = function(stage, scale, img) {
         this.stage = stage;
         this.scale = scale;
         this.box2dUtils = new Box2dUtils(scale);
         this.body = null;
         this.jumpContacts = 0;
 
-        var bitmap = new createjs.Bitmap("img/bird.png");
+        var bitmap = new createjs.Bitmap(img);
 
         bitmap.x = this.x;
         bitmap.y = this.y;

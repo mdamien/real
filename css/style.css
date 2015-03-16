@@ -1,5 +1,6 @@
 body, html {
 	background-color: #333;
+	margin: 0;
 }
 #loading {
 	display: none;

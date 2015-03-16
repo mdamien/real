@@ -1,19 +1,23 @@
 (function() {
+	this.parse_url_params = function() {
+		window.location.hash.slice(1).split('|').forEach(function(param){
+		    var kv = param.split(':');
+		    if(kv[1] == 'false'){
+		    	kv[1] = false;
+		    }
+		    if(kv[1] == 'true'){
+		    	kv[1] = true;
+		    }
+		    URL_PARAMS[kv[0]] = kv[1];
+		})
+	}
+
 	var URL_PARAMS = {
 		editor: false,
 		box2d: false,
+		lvl: 'xkcd1',
 	};
-	window.location.hash.slice(1).split('|').forEach(function(param){
-	    var kv = param.split(':');
-	    if(kv[1] == 'false'){
-	    	kv[1] = false;
-	    }
-	    if(kv[1] == 'true'){
-	    	kv[1] = true;
-	    }
-	    URL_PARAMS[kv[0]] = kv[1];
-	})
-	console.log(URL_PARAMS)
+	this.parse_url_params();
 	
 	var Ticker = createjs.Ticker;
 	var gipCanvas;
@@ -51,7 +55,7 @@
 
 	var box2dDebug = URL_PARAMS['box2d'];
 
-	var lvl = LEVELS['xkcd1']
+	var lvl = LEVELS[URL_PARAMS['lvl']]
 	
 	var player = null, background = null;
 	var keys = [];
@@ -77,12 +81,11 @@
 		prepareBox2d();		
 		
 		lvl.bg.img = loaded_queue.getResult("bg");
-		console.log(lvl.bg.img)
 		background = new Background(vp.container, SCALE, lvl.bg);
 		
 		addLines();
 		
-		player = new Player(vp.container, SCALE);
+		player = new Player(vp.container, SCALE, loaded_queue.getResult('bird'));
 		player.createPlayer(world, lvl.player.start.x*SCALE, lvl.player.start.y*SCALE, 20);
 
 		addContactListener();
@@ -92,7 +95,7 @@
 		window.addEventListener('keydown', handleKeyDown);
 		window.addEventListener('keyup', handleKeyUp);
 		
-		this.debug_screen_on_off()
+		this.debug_screen_on_off();
 		
 		document.onkeydown = function(event) {
 			return event.keyCode != 38 && event.keyCode != 40;
