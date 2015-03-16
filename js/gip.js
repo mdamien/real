@@ -1,34 +1,34 @@
 (function() {
 	
-	// EaselJS
-	var Ticker = createjs.Ticker;
-	var gipCanvas;				//  canvas easeljs
-	var stage;					// stage easeljs
 	
-	// Box2d Web
-	var box2dCanvas; // canvas box2d
-	var box2dUtils; // classe utilitaire box2d
-	var context; 	// contexte 2d
-	var SCALE = 30; // échelle
-	var world;		// world box2d
-	var canvasWidth, canvasHeight;	// dimensions du canvas
+	var Ticker = createjs.Ticker;
+	var gipCanvas;				
+	var stage;					
+	
+	
+	var box2dCanvas; 
+	var box2dUtils; 
+	var context; 	
+	var SCALE = 30; 
+	var world;		
+	var canvasWidth, canvasHeight;
 
-	// Gestion de la souris
 	var curr_line = null;
-	var isMouseDown = false; // le clic est-il enfoncé ?
-	var canvasPosition; // la position du canvas
+	var isMouseDown = false;
+	var canvasPosition;
 
 	var b2Vec2 = Box2D.Common.Math.b2Vec2;
 	var b2AABB = Box2D.Collision.b2AABB;
 	var b2Body = Box2D.Dynamics.b2Body;
 	
-	// pigs
 	var pigs = [];
 	
 	var lines = [];
 	var lines_parent = new createjs.Container();
-	var editing_mode = false;
+	var editing_mode = true;
 	lines_parent.visible = editing_mode;
+
+	var loaded_queue = new createjs.LoadQueue();
 
 	var vp = {
 		x:0,
@@ -36,66 +36,66 @@
 		container: new createjs.Container(),
 	}
 
-	// debug box2d ?
 	var box2dDebug = false;
+
+	var lvl = LEVELS['base']
 	
 	var player = null, background = null;
 	var keys = [];
 
-	// Initialisation
 	$(document).ready(function() {
-		init();
+		load();
 	});
-	
-	// Fonction d'initialisation
-	this.init = function() {
-		prepareStage();		// préparer l'environnement graphique
-		prepareBox2d();		// préparer l'environnement physique
-		
-		// Graphics
-		background = new Background(vp.container, SCALE);
-		
-		// Physics
-		addLines();
-		//addPigs();			// ajout d'éléments physiques dynamiques (pigs)
 
-		// Créer le player
+	this.load = function() {
+		loaded_queue.on("complete", function(){
+			init()
+		}, this);
+		loaded_queue.loadManifest([
+			{id: "bird", src:"img/bird.png"},
+			{id: "bg", src:lvl.bg.src},
+		]);
+	}
+	
+	this.init = function() {
+		prepareStage();		
+		prepareBox2d();		
+		
+		background = new Background(vp.container, SCALE, lvl.bg);
+		
+		addLines();
+		
 		player = new Player(vp.container, SCALE);
 		player.createPlayer(world, 100, canvasHeight-40, 20);
 
-		// Ajouter le listener de collisions
 		addContactListener();
 
-		// Ajouter les listeners d'événements souris	
 		window.addEventListener('mousedown', handleMouseDown);
 		window.addEventListener('mouseup', handleMouseUp);
-		
-		// Ajouter les listeners d'évènements
 		window.addEventListener('keydown', handleKeyDown);
 		window.addEventListener('keyup', handleKeyUp);
 		
 		this.debug_screen_on_off()
-
-		// Désactiver les scrollings vertical lors d'un appui sur les touches directionnelles "haut" et "bas"
+		
 		document.onkeydown = function(event) {
 			return event.keyCode != 38 && event.keyCode != 40;
 		}
 		
-		startTicker(30);	// lancer le ticker
+		startTicker(30);	
 	};
 	
-	// Préparer l'environnement graphique
+	
 	this.prepareStage = function() {
-		// récupérer le canvas GIP
+		
 		gipCanvas = $('#gipCanvas').get(0);
-		// créer le Stage
+		
 		stage = new createjs.Stage(gipCanvas);
-		// Classe utilitaire EaselJS
+		
 		easelJsUtils = new EaselJsUtils(stage);
 		stage.addChild(vp.container)
 	};
 	
-	// Préparer l'environnement physique
+	
 	this.prepareBox2d = function() {
 		box2dCanvas = $('#box2dCanvas').get(0);
 		canvasWidth = parseInt(box2dCanvas.width);
@@ -103,34 +103,29 @@
 		canvasPosition = $(box2dCanvas).position();
 		context = box2dCanvas.getContext('2d');
 		box2dUtils = new Box2dUtils(SCALE);
-		world = box2dUtils.createWorld(context); // box2DWorld
-		setWorldBounds(); // définir les limites de l'environnement
-	};
-	
-	// Créer les limites de l'environnement
-	this.setWorldBounds = function() {
-		// Créer le "sol" et le "plafond" de notre environnement physique
-		//ground = box2dUtils.createBox(world, 400, canvasHeight - 10, 400, 10, null, true, 'ground');
-		//ceiling = box2dUtils.createBox(world, 400, -5, 400, 1, null, true, 'ceiling');
-		
-		// Créer les "murs" de notre environnement physique
-		//leftWall = box2dUtils.createBox(world, -5, canvasHeight, 1, canvasHeight, null, true, 'leftWall');
-		//leftWall = box2dUtils.createBox(world, canvasWidth + 5, canvasHeight, 1, canvasHeight, null, true, 'leftWall');
+		world = box2dUtils.createWorld(context); 
 	};
 
 	this.addLine = function(coords){
 		var line = new Line(box2dUtils, world, lines_parent, SCALE, coords);
 		lines.push(line);
-		LINES = lines;
 		return line;
 	}
 
 	this.addLines = function() {
 		vp.container.addChild(lines_parent);
-		LINES.map(addLine);
+		//lvl.lines.map(addLine);
+
+		//world bounds
+		var bg = loaded_queue.getResult("bg");
+		var h = bg.height/SCALE*background.options.scale;
+		var w = bg.width/SCALE*background.options.scale;
+		addLine([{x:0, y:h},{x:w, y:h}]) //bottom
+		addLine([{x:0, y:0},{x:w, y:0}]) //top
+		addLine([{x:-0.1, y:0},{x:0, y:h}]) //left
+		addLine([{x:w+0.1, y:0},{x:w, y:h}]) //right
 	};
 
-	// Ajout des cochons
 	this.addPigs = function() {
 		for (var i=0; i<5; i++) {
 			var pig = box2dUtils.createPig(world, vp.container, Math.random() * canvasWidth, Math.random() * canvasHeight - 400 / SCALE);
@@ -138,16 +133,14 @@
 		}
 	};
 
-	// Démarrer le ticker
+	
 	this.startTicker = function(fps) {
 		Ticker.setFPS(fps);
 		Ticker.addEventListener("tick", tick);
 	};
 	
-	// Mise à jour de l'environnement
+	
 	this.tick = function() {
-		
-		// box2d
 		world.Step(1 / 15,  10, 10);
 		world.ClearForces();
 
@@ -175,7 +168,7 @@
 		stage.update();
 	};
 
-	// appuyer sur une touche
+	
 	this.handleKeyDown = function(evt) {
 		keys[evt.keyCode] = true;
 
@@ -193,18 +186,18 @@
 		}
 	}
 
-	// relacher une touche
+	
 	this.handleKeyUp = function(evt) {
 		keys[evt.keyCode] = false;
 	}
 
-	// Gérer les interactions
+	
 	this.handleInteractions = function() {
-		// touche "haut"
+		
 		if (keys[38]) {
 			player.jump();
 		}
-		// touches "gauche" et "droite"
+		
 		if (keys[37]) {
 			player.moveLeft();
 		} else if (keys[39]) {
@@ -212,21 +205,21 @@
 		}	
 	}
 
-	// Déterminer si l'objet physique est le player
+	
 	this.isPlayer = function(object) {
 		if (object != null && object.GetUserData() != null) {
 			return object.GetUserData() == 'player';
 		}
 	}
 	
-	// Déterminer si l'objet physique est les pieds du player
+	
 	this.isFootPlayer = function(object) {
 		if (object != null && object.GetUserData() != null) {
 			return object.GetUserData() == 'footPlayer';
 		}
 	}
 	
-	// Déterminer si l'objet physique est le sol ou une box
+	
 	this.isGroundOrBox = function(object) {
 		if (object != null && object.GetUserData() != null) {
 			return (object.GetUserData() == 'box'
@@ -271,7 +264,7 @@
 		return selectedBody;
 	}
 	
-	// Callback de getBody -> QueryAABB
+	
 	this.getBodyCallBack = function(fixture) {
         if (fixture.GetBody().GetType() != b2Body.b2_staticBody) {
             if (fixture.GetShape().TestPoint(fixture.GetBody().GetTransform(), mouseVec)) {
@@ -290,38 +283,38 @@
 		}
 	};
 
-	// Ajout du listener sur les collisions
+	
 	this.addContactListener = function() {
 		var b2Listener = Box2D.Dynamics.b2ContactListener;
-		//Add listeners for contact
+		
 		var listener = new b2Listener;
 		
-		// Entrée en contact
+		
 		listener.BeginContact = function(contact) {
 			var obj1 = contact.GetFixtureA();
 			var obj2 = contact.GetFixtureB();
 			if (isFootPlayer(obj1) || isFootPlayer(obj2)) {
 				if (isGroundOrBox(obj1) || isGroundOrBox(obj2)) {					
-					player.jumpContacts ++;	// le joueur entre en contact avec une plate-forme de saut
+					player.jumpContacts ++;	
 				}
 			}
 		}
 		
-		// Fin de contact
+		
 		listener.EndContact = function(contact) {
 			var obj1 = contact.GetFixtureA();
 			var obj2 = contact.GetFixtureB();
 			if (isFootPlayer(obj1) || isFootPlayer(obj2)) {
 				if (isGroundOrBox(obj1) || isGroundOrBox(obj2)) {
-					player.jumpContacts --;	// le joueur quitte une plate-forme de saut
+					player.jumpContacts --;	
 				}
 			}
 		}
 		listener.PostSolve = function(contact, impulse) {
-			// PostSolve
+			
 		}
 		listener.PreSolve = function(contact, oldManifold) {
-		    // PreSolve
+		    
 		}
 		world.SetContactListener(listener);
 	}

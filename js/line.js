@@ -38,8 +38,8 @@
 		update_graphics: function(){
 			var line = this.skin;
 			line.graphics.clear();
-			line.graphics.setStrokeStyle(1);
-			line.graphics.beginStroke('black');
+			line.graphics.setStrokeStyle(3);
+			line.graphics.beginStroke('orange');
 			line.graphics.moveTo(this.coords[0].x*this.scale,
 					this.coords[0].y*this.scale);
 			line.graphics.lineTo(this.coords[1].x*this.scale,

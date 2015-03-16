@@ -1,11 +1,10 @@
-- change bg
+- img preload
+- level loading
 
 - fullscreen
-- img preload
 - correct mouse coords with scroll
-- box2d debug translate with viewport
 
-- react editing interface
+- editor interface (react)
 	- world scale
 	- gravity
 	- lines
@@ -19,3 +18,4 @@
 	- remove lines
 
 - touchscreen controls
+- box2d debug translate with viewport
