@@ -94,6 +94,9 @@
 		window.addEventListener('mouseup', handleMouseUp);
 		window.addEventListener('keydown', handleKeyDown);
 		window.addEventListener('keyup', handleKeyUp);
+
+		window.onresize = function(){ onResize(); }
+		onResize();
 		
 		this.debug_screen_on_off();
 		
@@ -339,4 +342,12 @@
 	}
 
 
+
+	this.onResize = function() {
+		var w = window.innerWidth;
+		var h = window.innerHeight;
+
+		gipCanvas.width = w;
+		gipCanvas.height = h;
+	}
 }());

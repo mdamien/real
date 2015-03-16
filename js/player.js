@@ -1,4 +1,6 @@
 (function(){
+    b2Vec2 = Box2D.Common.Math.b2Vec2;
+
     Player = function(stage, scale, img) {
         this.stage = stage;
         this.scale = scale;

@@ -1,5 +1,5 @@
 body, html {
-	background-color: #333;
+	background-color: #222;
 	margin: 0;
 }
 #loading {
@@ -12,11 +12,6 @@ body, html {
     top: 10px;
     width: 100%;
     z-index: 100;
-}
-#divCanvas {
-	width: 800px;
-	height: 600px;
-	margin: auto;
 }
 #gipCanvas {
 	background-color: #333;

@@ -1,5 +1,4 @@
 (function(){
-	b2Vec2 = Box2D.Common.Math.b2Vec2;
 
 	Line = function(box2dUtils, world, stage, scale, coords) {
 		this.box2dUtils = box2dUtils;
