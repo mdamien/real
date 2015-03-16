@@ -1,5 +1,19 @@
 (function() {
-	
+	var URL_PARAMS = {
+		editor: false,
+		box2d: false,
+	};
+	window.location.hash.slice(1).split('|').forEach(function(param){
+	    var kv = param.split(':');
+	    if(kv[1] == 'false'){
+	    	kv[1] = false;
+	    }
+	    if(kv[1] == 'true'){
+	    	kv[1] = true;
+	    }
+	    URL_PARAMS[kv[0]] = kv[1];
+	})
+	console.log(URL_PARAMS)
 	
 	var Ticker = createjs.Ticker;
 	var gipCanvas;
@@ -24,7 +38,7 @@
 	
 	var lines = [];
 	var lines_parent = new createjs.Container();
-	var editing_mode = true;
+	var editing_mode = URL_PARAMS['editor'];
 	lines_parent.visible = editing_mode;
 
 	var loaded_queue = new createjs.LoadQueue();
@@ -35,7 +49,7 @@
 		container: new createjs.Container(),
 	}
 
-	var box2dDebug = false;
+	var box2dDebug = URL_PARAMS['box2d'];
 
 	var lvl = LEVELS['xkcd1']
 	
