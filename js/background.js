@@ -1,30 +1,40 @@
 (function(){
-	Background = function(stage, scale, options) {
-		this.skin = null;
-		this.stage = stage;
-		this.scale = scale;
-		this.options = options;
-		this.init();
-	};
-	
-	Background.prototype = {
-		
-		init: function() {
-			var bitmap = new createjs.Bitmap(this.options.img);
+    Background = function(stage, scale, options) {
+        this.skin = null;
+        this.stage = stage;
+        this.scale = scale;
+        this.options = options;
+        this.container = new createjs.Container();
+        this.stage.addChild(this.container);
+        this.init();
+    };
+    
+    Background.prototype = {
+        
+        init: function() {
+            this.setImage(this.options.img)
+        },
 
-			bitmap.x = 0;
-			bitmap.y = 0;
+        setImage: function(img){
+            if(this.skin == null){
+                this.container.removeChild(this.skin);
+            }
+            this.options.img = img;
+            var bitmap = new createjs.Bitmap(this.options.img);
 
-			bitmap.scaleX = this.options.scale;
-			bitmap.scaleY = this.options.scale;
+            bitmap.x = 0;
+            bitmap.y = 0;
 
-			this.width = bitmap.width*bitmap.scaleX;
-			this.height = bitmap.height*bitmap.scaleY;
+            bitmap.scaleX = this.options.scale;
+            bitmap.scaleY = this.options.scale;
 
-			this.stage.addChild(bitmap);
+            this.width = bitmap.width*bitmap.scaleX;
+            this.height = bitmap.height*bitmap.scaleY;
 
-			this.skin = bitmap;
-		},
-	};
-	
+            this.container.addChild(bitmap);
+
+            this.skin = bitmap;
+        },
+    };
+    
 }());
