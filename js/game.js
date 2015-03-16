@@ -43,7 +43,6 @@
 	var lines = [];
 	var lines_parent = new createjs.Container();
 	var editing_mode = URL_PARAMS['editor'];
-	lines_parent.visible = editing_mode;
 
 	var free_move_camera = true;
 
@@ -107,8 +106,15 @@
 			return event.keyCode != 38 && event.keyCode != 40;
 		}
 		
+		this.editor_on_off();
+
 		startTicker(30);	
 	};
+
+	this.editor_on_off = function(){
+		lines_parent.visible = editing_mode;
+		$('#editor').toggle(editing_mode);
+	}
 	
 	
 	this.prepareStage = function() {
@@ -202,7 +208,7 @@
 
 		if(evt.keyCode == 69){ //e
 			editing_mode = !editing_mode;
-			lines_parent.visible = editing_mode;
+			this.editor_on_off()
 		}
 		if(evt.keyCode == 66){ //b
 			box2dDebug = !box2dDebug;

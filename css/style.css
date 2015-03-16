@@ -1,6 +1,7 @@
 body, html {
 	background-color: #222;
 	margin: 0;
+	height: 100%;
 }
 #loading {
 	display: none;
@@ -25,4 +26,17 @@ body, html {
 	width: 100%;
 	text-align: center;
 	margin-top: 10px;
+}
+
+#editor {
+	background-color: #FFF;
+	position: absolute;
+	opacity: 1;
+	border-right: 2px solid black; 
+	width: 250px;
+	height: 100%;
+	margin:	0;
+	padding:20px;
+	display: none;
+	box-sizing: border-box;
 }
