@@ -41,7 +41,8 @@
     var pigs = [];
     
     var lines = [];
-    var lines_parent = new createjs.Container();
+    var lines_parent = null;
+    var bg_parent = null;
     var editing_mode = URL_PARAMS['editor'];
 
     var free_move_camera = true;
@@ -84,13 +85,15 @@
         prepareStage();     
         prepareBox2d();     
 
-        this.load_level(LEVELS['base'], function(){ 
-            this.reset_lines();
-            addLines();
-            
-            player = new Player(vp.container, SCALE, loaded_queue.getResult('bird'));
-            player.createPlayer(world, lvl.player.start.x*SCALE, lvl.player.start.y*SCALE, 17);
+        lines_parent = new createjs.Container();
+        vp.container.addChild(lines_parent);
+        bg_parent = new createjs.Container();
+        vp.container.addChild(bg_parent);
 
+        player = new Player(vp.container, SCALE, loaded_queue.getResult('bird'));
+        player.createPlayer(world, 0, 0, 17);
+
+        this.load_level(LEVELS['base'], function(){ 
             addContactListener();
 
             window.addEventListener('mousedown', handleMouseDown);
@@ -120,23 +123,33 @@
 
 
     this.load_level = function(new_lvl, next){
-        lvl = new_lvl;
-        bg_parent = new createjs.Container();
-        vp.container.addChild(bg_parent);
-
         var queue = new createjs.LoadQueue();
 
         $('#loading').html("loading level")
         $('#loading').show()
         queue.on("complete", function(){
             $('#loading').hide();
-            lvl.bg.img = queue.getResult("bg");
-            background = new Background(bg_parent, SCALE, lvl.bg);
-            next()
+            new_lvl.bg.img = queue.getResult("bg");
+            load_level_post(new_lvl, next);
         }, this);
         queue.loadManifest([
-            {id: "bg", src:lvl.bg.src},
+            {id: "bg", src:new_lvl.bg.src},
         ]);
+    }
+
+    this.load_level_post = function(new_lvl, next){
+        lvl = new_lvl;
+
+        bg_parent.removeAllChildren();
+        background = new Background(bg_parent, SCALE, new_lvl.bg);
+        bg_parent.addChild(background.skin);
+
+        this.reset_lines();
+        addLines();
+        
+        player.setPos(lvl.player.start.x, lvl.player.start.y)
+        
+        next()
     }
 
     this.editor_on_off = function(){
@@ -170,17 +183,25 @@
         if (files && files.length) {
             var fr = new FileReader();
             fr.onload = function () {
-                document.getElementById('bg').src = fr.result;
-                var img = new Image;
-                img.onload = function(){
-                    //lvl.bg.scale = parseFloat($('#scale').val())
-                    lvl.bg.src = fr.result;
-                    lvl.bg.img = img;
-                    background.remove();
-                    background = new Background(bg_parent, SCALE, lvl.bg);
-                    reset_lines();
+                var img = Image();
+                img.onload = function() {
+                    var new_lvl = {
+                        player:{
+                            start:{
+                                x:5,
+                                y:3,
+                            }
+                        },
+                        bg:{
+                            src: fr.result,
+                            scale: parseFloat($('#scale').val()),
+                            img: img,
+                        },
+                        lines: [],
+                    }
+                    load_level_post(new_lvl);
                 }
-                img.src = fr.result
+                img.src = fr.result;
             }
             fr.readAsDataURL(files[0]);
         }
@@ -207,7 +228,6 @@
     }
 
     this.addLines = function() {
-        vp.container.addChild(lines_parent);
         lvl.lines.map(addLine);
     };
 

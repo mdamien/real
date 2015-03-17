@@ -1,12 +1,9 @@
 (function(){
-    Background = function(stage, scale, options) {
-        console.log(options)
+    Background = function(container, scale, options) {
         this.skin = null;
-        this.stage = stage;
+        this.container = container;
         this.scale = scale;
         this.options = options;
-        this.container = new createjs.Container();
-        this.stage.addChild(this.container);
         this.init();
     };
     
