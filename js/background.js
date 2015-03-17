@@ -1,5 +1,6 @@
 (function(){
     Background = function(stage, scale, options) {
+        console.log(options)
         this.skin = null;
         this.stage = stage;
         this.scale = scale;
@@ -12,14 +13,6 @@
     Background.prototype = {
         
         init: function() {
-            this.setImage(this.options.img)
-        },
-
-        setImage: function(img){
-            if(this.skin != null){
-                this.container.removeChild(this.skin);
-            }
-            this.options.img = img;
             var bitmap = new createjs.Bitmap(this.options.img);
 
             bitmap.x = 0;
@@ -35,6 +28,10 @@
 
             this.skin = bitmap;
         },
+
+        remove: function(){
+            this.container.removeChild(this.skin);
+        }
     };
     
 }());

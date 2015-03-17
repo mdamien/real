@@ -59,7 +59,7 @@
 
     var lvl = LEVELS[URL_PARAMS['lvl']]
     
-    var player = null, background = null;
+    var player = null, background = null, bg_parent = null;
     var keys = [];
 
     var touch_pointers = {};
@@ -87,7 +87,9 @@
         prepareBox2d();     
         
         lvl.bg.img = loaded_queue.getResult("bg");
-        background = new Background(vp.container, SCALE, lvl.bg);
+        bg_parent = new createjs.Container();
+        vp.container.addChild(bg_parent);
+        background = new Background(bg_parent, SCALE, lvl.bg);
         
         this.reset_lines();
         addLines();
@@ -105,6 +107,8 @@
         createjs.Touch.enable(stage);
         stage.addEventListener('pressmove', handlePressMove);
         stage.addEventListener('pressup', handlePressUp);
+
+        $('#editor-background').on('change', this.editor_load_bg)
 
         window.onresize = function(){ onResize(); }
         onResize();
@@ -153,26 +157,38 @@
             var fr = new FileReader();
             fr.onload = function () {
                 document.getElementById('bg').src = fr.result;
-                background.setImage(fr.result);
-                reset_lines();
+                var img = new Image;
+                img.onload = function(){
+                    //lvl.bg.scale = parseFloat($('#scale').val())
+                    lvl.bg.src = fr.result;
+                    lvl.bg.img = img;
+                    console.log('remove bg')
+                    background.remove();
+                    background = new Background(bg_parent, SCALE, lvl.bg);
+                    //reset_lines();
+                }
+                img.src = fr.result
             }
             fr.readAsDataURL(files[0]);
         }
     }
 
     this.reset_lines = function(){
+        console.log('rest')
         lines.forEach(function(line){
             line.remove();
         });
         lines = []
 
-        var bg = loaded_queue.getResult("bg");
+        var bg = background.options.img;
         var h = bg.height/SCALE*background.options.scale;
         var w = bg.width/SCALE*background.options.scale;
+        console.log('reset',h,w)
         addLine([{x:0, y:h},{x:w, y:h}]) //bottom
         addLine([{x:0, y:0},{x:w, y:0}]) //top
         addLine([{x:-0.1, y:0},{x:0, y:h}]) //left
         addLine([{x:w+0.1, y:0},{x:w, y:h}]) //right
+        console.log(lines)
     }
 
     this.addLine = function(coords){
