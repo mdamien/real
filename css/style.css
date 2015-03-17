@@ -22,11 +22,6 @@ body, html {
 	position: absolute;
 	opacity: 0;
 }
-#divBtnDebug {
-	width: 100%;
-	text-align: center;
-	margin-top: 10px;
-}
 
 #editor {
 	background-color: #FFF;

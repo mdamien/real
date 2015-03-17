@@ -57,7 +57,7 @@
 
     var box2dDebug = URL_PARAMS['box2d'];
 
-    var lvl = LEVELS[URL_PARAMS['lvl']]
+    var lvl = null;
     
     var player = null, background = null, bg_parent = null;
     var keys = [];
@@ -69,59 +69,75 @@
     });
 
     this.load = function() {
-        window.scrollTo(0,1);//hide top bar
-
-        $('#loading').fadeIn()
+        $('#loading').html("loading game")
+        $('#loading').show()
         loaded_queue.on("complete", function(){
             $('#loading').hide()
             init()
         }, this);
         loaded_queue.loadManifest([
             {id: "bird", src:"img/bird.png"},
-            {id: "bg", src:lvl.bg.src},
         ]);
     }
     
     this.init = function() {
         prepareStage();     
         prepareBox2d();     
-        
-        lvl.bg.img = loaded_queue.getResult("bg");
+
+        this.load_level(LEVELS['base'], function(){ 
+            this.reset_lines();
+            addLines();
+            
+            player = new Player(vp.container, SCALE, loaded_queue.getResult('bird'));
+            player.createPlayer(world, lvl.player.start.x*SCALE, lvl.player.start.y*SCALE, 17);
+
+            addContactListener();
+
+            window.addEventListener('mousedown', handleMouseDown);
+            window.addEventListener('mouseup', handleMouseUp);
+            window.addEventListener('keydown', handleKeyDown);
+            window.addEventListener('keyup', handleKeyUp);
+
+            createjs.Touch.enable(stage);
+            stage.addEventListener('pressmove', handlePressMove);
+            stage.addEventListener('pressup', handlePressUp);
+
+            $('#editor-background').on('change', this.editor_load_bg)
+
+            window.onresize = function(){ onResize(); }
+            onResize();
+            
+            this.debug_screen_on_off();
+            this.editor_on_off();
+
+            document.onkeydown = function(event) {
+                return event.keyCode != 38 && event.keyCode != 40;
+            }
+
+            startTicker(30);
+        });
+    };
+
+
+    this.load_level = function(new_lvl, next){
+        lvl = new_lvl;
         bg_parent = new createjs.Container();
         vp.container.addChild(bg_parent);
-        background = new Background(bg_parent, SCALE, lvl.bg);
-        
-        this.reset_lines();
-        addLines();
-        
-        player = new Player(vp.container, SCALE, loaded_queue.getResult('bird'));
-        player.createPlayer(world, lvl.player.start.x*SCALE, lvl.player.start.y*SCALE, 17);
 
-        addContactListener();
+        var queue = new createjs.LoadQueue();
 
-        window.addEventListener('mousedown', handleMouseDown);
-        window.addEventListener('mouseup', handleMouseUp);
-        window.addEventListener('keydown', handleKeyDown);
-        window.addEventListener('keyup', handleKeyUp);
-
-        createjs.Touch.enable(stage);
-        stage.addEventListener('pressmove', handlePressMove);
-        stage.addEventListener('pressup', handlePressUp);
-
-        $('#editor-background').on('change', this.editor_load_bg)
-
-        window.onresize = function(){ onResize(); }
-        onResize();
-        
-        this.debug_screen_on_off();
-        this.editor_on_off();
-
-        document.onkeydown = function(event) {
-            return event.keyCode != 38 && event.keyCode != 40;
-        }
-
-        startTicker(30);    
-    };
+        $('#loading').html("loading level")
+        $('#loading').show()
+        queue.on("complete", function(){
+            $('#loading').hide();
+            lvl.bg.img = queue.getResult("bg");
+            background = new Background(bg_parent, SCALE, lvl.bg);
+            next()
+        }, this);
+        queue.loadManifest([
+            {id: "bg", src:lvl.bg.src},
+        ]);
+    }
 
     this.editor_on_off = function(){
         lines_parent.visible = editing_mode;
@@ -131,9 +147,7 @@
     
     this.prepareStage = function() {
         gipCanvas = $('#gipCanvas').get(0);
-        
         stage = new createjs.Stage(gipCanvas);
-        
         easelJsUtils = new EaselJsUtils(stage);
         stage.addChild(vp.container)
     };
@@ -162,10 +176,9 @@
                     //lvl.bg.scale = parseFloat($('#scale').val())
                     lvl.bg.src = fr.result;
                     lvl.bg.img = img;
-                    console.log('remove bg')
                     background.remove();
                     background = new Background(bg_parent, SCALE, lvl.bg);
-                    //reset_lines();
+                    reset_lines();
                 }
                 img.src = fr.result
             }
@@ -174,21 +187,17 @@
     }
 
     this.reset_lines = function(){
-        console.log('rest')
         lines.forEach(function(line){
             line.remove();
         });
         lines = []
-
         var bg = background.options.img;
         var h = bg.height/SCALE*background.options.scale;
         var w = bg.width/SCALE*background.options.scale;
-        console.log('reset',h,w)
         addLine([{x:0, y:h},{x:w, y:h}]) //bottom
         addLine([{x:0, y:0},{x:w, y:0}]) //top
         addLine([{x:-0.1, y:0},{x:0, y:h}]) //left
         addLine([{x:w+0.1, y:0},{x:w, y:h}]) //right
-        console.log(lines)
     }
 
     this.addLine = function(coords){
@@ -208,13 +217,11 @@
             pigs.push(pig);
         }
     };
-
     
     this.startTicker = function(fps) {
         Ticker.setFPS(fps);
         Ticker.addEventListener("tick", tick);
     };
-    
     
     this.tick = function() {
         world.Step(1 / 15,  10, 10);
@@ -246,35 +253,40 @@
         }
         stage.update();
     };
-
     
     this.handleKeyDown = function(evt) {
         keys[evt.keyCode] = true;
 
-        if(evt.keyCode == 69){ //e
+        var c = String.fromCharCode(evt.keyCode).toLowerCase();
+        if(c == 'e'){
             editing_mode = !editing_mode;
             this.editor_on_off()
         }
-        if(evt.keyCode == 66){ //b
+        if(c == 'b'){
             box2dDebug = !box2dDebug;
             this.debug_screen_on_off();
         }
-        if(evt.keyCode == 80){ //p
+        if(c == 'p'){
             var pig = box2dUtils.createPig(world, vp.container, Math.random() * canvasWidth, Math.random() * canvasHeight - 400 / SCALE);
             pigs.push(pig);
         }
-
-        if(evt.key == '-'){
+        if(c == '-'){
             vp.zoom -= 0.1;
         }
-        if(evt.key == '+'){
+        if(c == '+'){
             vp.zoom += 0.1;
         }
-        if(evt.key == 'r'){
+        if(c == 'r'){
             reset_lines();
         }
-        if(evt.key == 'c'){
+        if(c == 'c'){
             player.setPos(2,2);
+        }
+        if(c == '1'){
+            this.load_level(LEVELS['base'])
+        }
+        if(c == '2'){
+            this.load_level(LEVELS['xkcd1'])
         }
     }
 
@@ -288,12 +300,10 @@
         for(key in touch_pointers){
             if(key != -1){
                 var coords = touch_pointers[key];
-                console.log(coords)
                 var x = coords.x;
                 var y = coords.y;
                 var w_middle = canvasWidth*2/3.;
                 var w_quarter = canvasWidth/3.;
-                console.log(w_middle, w_quarter);
                 if(x < w_quarter){
                     player.moveLeft();
                 }
@@ -465,5 +475,8 @@
 
         canvasWidth = w;
         canvasHeight = h;
+
+        box2dCanvas.width = w;
+        box2dCanvas.height = h;
     }
 }());
