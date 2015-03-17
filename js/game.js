@@ -271,7 +271,10 @@
             vp.zoom += 0.1;
         }
         if(evt.key == 'r'){
-            this.reset_lines();
+            reset_lines();
+        }
+        if(evt.key == 'c'){
+            player.setPos(2,2);
         }
     }
 
@@ -283,21 +286,23 @@
     
     this.handleInteractions = function() {
         for(key in touch_pointers){
-            var coords = touch_pointers[key];
-            console.log(coords)
-            var x = coords.x;
-            var y = coords.y;
-            var w_middle = canvasWidth*2/3.;
-            var w_quarter = canvasWidth/3.;
-            console.log(w_middle, w_quarter);
-            if(x < w_quarter){
-                player.moveLeft();
-            }
-            if(x > w_quarter && x < w_middle){
-                player.moveRight();
-            }
-            if(x > w_middle){
-                player.jump();
+            if(key != -1){
+                var coords = touch_pointers[key];
+                console.log(coords)
+                var x = coords.x;
+                var y = coords.y;
+                var w_middle = canvasWidth*2/3.;
+                var w_quarter = canvasWidth/3.;
+                console.log(w_middle, w_quarter);
+                if(x < w_quarter){
+                    player.moveLeft();
+                }
+                if(x > w_quarter && x < w_middle){
+                    player.moveRight();
+                }
+                if(x > w_middle){
+                    player.jump();
+                }
             }
         }
 

@@ -53,6 +53,10 @@
             this.skin.x = this.body.GetBody().GetWorldCenter().x * this.scale;
             this.skin.y = this.body.GetBody().GetWorldCenter().y * this.scale;
             this.skin.scaleX = (this.body.GetBody().GetLinearVelocity().x > -0.001 ? 1 : -1)*this.BITMAP_SCALE;
-        }
+        },
+
+        setPos: function(x, y) {
+            this.body.m_body.SetPosition({x:x, y:y});
+        },
     }
 }());

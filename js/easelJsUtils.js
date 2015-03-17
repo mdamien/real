@@ -23,31 +23,10 @@
 				return bitmap;
 			},
 			
-			createGrassBlock: function(x, y, options) {
-				return this.createBitmap("img/GrassBlock.png", x, y, options);
-			},
-			
-			createShortTree: function(x, y, options) {
-				return this.createBitmap("img/ShortTree.png", x, y, options);
-			},
-			
-			createTallTree: function(x, y, options) {
-				return this.createBitmap("img/TallTree.png", x, y, options);
-			},
-			
-			createRock: function(x, y, options) {
-				return this.createBitmap("img/Rock.png", x, y, options);
-			},
-			
 
 			createPig: function(x, y, options) {
 				return this.createBitmap("img/pig.png", x, y, options);
 			},
-			
-			createCloud: function(x, y, options) {
-				return this.createBitmap("img/cloud.png", x, y, options);
-			},
-			
 
 			createText: function(text, font, x, y, options) {
 				var txt = new createjs.Text();

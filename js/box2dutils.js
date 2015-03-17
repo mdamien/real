@@ -147,7 +147,7 @@
 			    fixDef.shape = new b2PolygonShape;
 			    fixDef.density = 1.0;
 			    fixDef.friction = 1.0;
-			    fixDef.restitution = .5;
+			    fixDef.restitution = 0;
 			    fixDef.userData = "line";
 			    fixDef.shape.SetAsArray(coords,2
 			                );

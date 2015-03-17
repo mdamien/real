@@ -3,7 +3,14 @@
 	- put it on app
 	- draw
 	- play
-	(- save & load)
+	- save
+	- load
+ 
+
+- TECHNICAL DEBT: Clean things up
+	- nice state management
+	- break up game.js in multiple files
+	- editor logic elsewhere
 
 - editor interface (react)
 	- world scale
