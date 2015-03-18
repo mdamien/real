@@ -83,17 +83,17 @@
     
     this.init = function() {
         prepareStage();     
-        prepareBox2d();     
+        prepareBox2d();    
 
-        lines_parent = new createjs.Container();
-        vp.container.addChild(lines_parent);
         bg_parent = new createjs.Container();
         vp.container.addChild(bg_parent);
+        lines_parent = new createjs.Container();
+        vp.container.addChild(lines_parent);
 
         player = new Player(vp.container, SCALE, loaded_queue.getResult('bird'));
         player.createPlayer(world, 0, 0, 17);
 
-        this.load_level(LEVELS['base'], function(){ 
+        this.load_level(LEVELS['xkcd1'], function(){ 
             addContactListener();
 
             window.addEventListener('mousedown', handleMouseDown);
@@ -145,7 +145,7 @@
         bg_parent.addChild(background.skin);
 
         this.reset_lines();
-        addLines();
+        addLines(new_lvl.lines);
         
         player.setPos(lvl.player.start.x, lvl.player.start.y)
         
@@ -227,8 +227,8 @@
         return line;
     }
 
-    this.addLines = function() {
-        lvl.lines.map(addLine);
+    this.addLines = function(lines) {
+        lines.map(addLine);
     };
 
     this.addPigs = function() {
@@ -307,6 +307,9 @@
         }
         if(c == '2'){
             this.load_level(LEVELS['xkcd1'])
+        }
+        if(c == 'd'){
+            debugger;
         }
     }
 

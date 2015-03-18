@@ -19,7 +19,6 @@
 			this.skin = line;
 			this.update_graphics();
 			this.update_physics();
-
 		},
 
 		update_physics: function(){
@@ -45,7 +44,6 @@
 					this.coords[1].y*this.scale);
 			line.graphics.endStroke();
 			this.skin = line;
-			this.stage.addChild(line);
 		},
 
 		setEnd: function(end) {
