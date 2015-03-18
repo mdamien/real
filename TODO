@@ -1,18 +1,6 @@
-- real workflow
-	- take picture X
-	- put it on app X
-	- draw X
-	- play X
-	- save X
-	- load
- 
+- load level from file
 
-- TECHNICAL DEBT: Clean things up
-	- nice state management
-	- break up game.js in multiple files
-	- editor logic elsewhere
-
-- editor interface (react)
+- nice editor interface (react)
 	- world scale
 	- gravity
 	- lines
@@ -24,6 +12,11 @@
 	- coins
 	- undo
 	- remove lines
+
+- TECHNICAL DEBT: Clean things up
+	- nice state management
+	- break up game.js in multiple files
+	- editor logic elsewhere
 
 - free camera
 
