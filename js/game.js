@@ -106,6 +106,7 @@
             stage.addEventListener('pressup', handlePressUp);
 
             $('#editor-background').on('change', this.editor_load_bg)
+            $('#save').on('click', this.save_level)
 
             window.onresize = function(){ onResize(); }
             onResize();
@@ -150,6 +151,13 @@
         player.setPos(lvl.player.start.x, lvl.player.start.y)
         
         next()
+    }
+
+    this.save_level = function(){
+        var a = document.getElementById('save');
+        var data = JSON.stringify(lvl);
+        a.href = 'data:text/json;charset=utf8,' + encodeURIComponent(data);
+        a.click();
     }
 
     this.editor_on_off = function(){
@@ -290,10 +298,10 @@
             var pig = box2dUtils.createPig(world, vp.container, Math.random() * canvasWidth, Math.random() * canvasHeight - 400 / SCALE);
             pigs.push(pig);
         }
-        if(c == '-'){
+        if(evt.key == '-'){
             vp.zoom -= 0.1;
         }
-        if(c == '+'){
+        if(evt.key == '+'){
             vp.zoom += 0.1;
         }
         if(c == 'r'){
@@ -301,6 +309,9 @@
         }
         if(c == 'c'){
             player.setPos(2,2);
+        }
+        if(c == 's'){
+            this.save_level()
         }
         if(c == '1'){
             this.load_level(LEVELS['base'])
