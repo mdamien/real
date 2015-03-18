@@ -53,7 +53,9 @@
 		},
 
 		remove: function() {
-			this.world.DestroyBody(this.body);
+			if(this.body){
+				this.world.DestroyBody(this.body);
+			}
 			this.stage.removeChild(this.skin);
 		}
 	};

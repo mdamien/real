@@ -198,8 +198,7 @@
                             img: img,
                         },
                         lines: [],
-                    }
-                    debugger;
+                    };
                     load_level_post(new_lvl);
                 }
                 img.src = fr.result;
@@ -212,7 +211,6 @@
         lines.forEach(function(line){
             line.remove();
         });
-        console.log('me ?')
         lines = []
         var bg = background.options.img;
         var h = bg.height/SCALE*background.options.scale;
