@@ -317,7 +317,7 @@
                 this.load_level(LEVELS['xkcd1']);
                 break;
             case '3':
-                this.load_level(LEVELS['bertile']);
+                this.load_level(LEVELS['bertille']);
                 break;
             case '4':
                 this.load_level(LEVELS['lvl2']);
