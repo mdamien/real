@@ -163,6 +163,6 @@
 			    var body = world.CreateBody(bodyDef);
 			    this.addLineFixture(body, coords);
 			    return body;
-			},
+			}
 	}
 }());
