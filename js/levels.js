@@ -41,8 +41,8 @@ var LEVELS = {
 	'lvl2': {
 		player:{
 			start:{
-				x:2,
-				y:3,
+				x:12.75,
+				y:41,
 			},
 		},
 		bg:{
