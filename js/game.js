@@ -15,7 +15,7 @@
     var URL_PARAMS = {
         editor: false,
         box2d: false,
-        lvl: 'xkcd1',
+        lvl: 'bertille',
     };
     this.parse_url_params();
     
@@ -93,7 +93,7 @@
         player = new Player(vp.container, SCALE, loaded_queue.getResult('bird'));
         player.createPlayer(world, 0, 0, 17);
 
-        this.load_level(LEVELS['xkcd1'], function(){ 
+        this.load_level(LEVELS[URL_PARAMS['lvl']], function(){ 
             addContactListener();
 
             window.addEventListener('mousedown', handleMouseDown);
@@ -124,6 +124,7 @@
 
 
     this.load_level = function(new_lvl, next){
+        console.log(new_lvl)
         var queue = new createjs.LoadQueue();
 
         $('#loading').html("loading level")
@@ -162,7 +163,7 @@
 
     this.editor_on_off = function(){
         lines_parent.visible = editing_mode;
-        $('#editor').toggle(editing_mode);
+        //$('#editor').toggle(editing_mode);
     }
     
     
@@ -312,6 +313,10 @@
         }
         if(c == 's'){
             this.save_level()
+        }
+        if(c == 'u'){
+            var last = lines.pop();
+            last.remove();
         }
         if(c == '1'){
             this.load_level(LEVELS['base'])
