@@ -15,7 +15,7 @@
     var URL_PARAMS = {
         editor: false,
         box2d: false,
-        lvl: 'bertille',
+        lvl: 'lvl2',
     };
     this.parse_url_params();
     
@@ -323,6 +323,12 @@
         }
         if(c == '2'){
             this.load_level(LEVELS['xkcd1'])
+        }
+        if(c == '3'){
+            this.load_level(LEVELS['bertille'])
+        }
+        if(c == '4'){
+            this.load_level(LEVELS['lvl2'])
         }
         if(c == 'd'){
             debugger;
