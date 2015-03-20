@@ -286,41 +286,44 @@
         keys[evt.keyCode] = true;
 
         var c = String.fromCharCode(evt.keyCode).toLowerCase();
-        if(c == 'e'){
-            editing_mode = !editing_mode;
-            this.editor_on_off()
+
+        switch (c) {
+            case 'e':
+                editing_mode = !editing_mode;
+                this.editor_on_off()
+                break;
+            case 'b':
+                box2dDebug = !box2dDebug;
+                this.debug_screen_on_off();
+                break;
+            case 'p':
+                var pig = box2dUtils.createPig(world, vp.container, Math.random() * canvasWidth, Math.random() * canvasHeight - 400 / SCALE);
+                pigs.push(pig);
+                break;
+            case 'r':
+                reset_lines();
+                break;
+            case 'c':
+                player.setPos(2,2);
+                break;
+            case 's':
+                this.save_level();
+                break;
+            case '1':
+                this.load_level(LEVELS['base']);
+                break;
+            case '2':
+                this.load_level(LEVELS['xkcd1']);
+                break;
+            case 'd':
+                debugger;
+                break;
         }
-        if(c == 'b'){
-            box2dDebug = !box2dDebug;
-            this.debug_screen_on_off();
-        }
-        if(c == 'p'){
-            var pig = box2dUtils.createPig(world, vp.container, Math.random() * canvasWidth, Math.random() * canvasHeight - 400 / SCALE);
-            pigs.push(pig);
-        }
-        if(evt.key == '-'){
+        if(evt.key == '-' || evt.keyCode == 189){
             vp.zoom -= 0.1;
         }
-        if(evt.key == '+'){
+        if(evt.key == '+' || evt.keyCode == 187){
             vp.zoom += 0.1;
-        }
-        if(c == 'r'){
-            reset_lines();
-        }
-        if(c == 'c'){
-            player.setPos(2,2);
-        }
-        if(c == 's'){
-            this.save_level()
-        }
-        if(c == '1'){
-            this.load_level(LEVELS['base'])
-        }
-        if(c == '2'){
-            this.load_level(LEVELS['xkcd1'])
-        }
-        if(c == 'd'){
-            debugger;
         }
     }
 
