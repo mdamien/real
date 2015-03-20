@@ -316,6 +316,12 @@
             case '2':
                 this.load_level(LEVELS['xkcd1']);
                 break;
+            case '3':
+                this.load_level(LEVELS['bertile']);
+                break;
+            case '4':
+                this.load_level(LEVELS['lvl2']);
+                break;
             case 'u':
                 var last = lines.pop();
                 last.remove();
