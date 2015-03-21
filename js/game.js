@@ -263,8 +263,15 @@
             pigs[i].update();
         }
 
-        vp.x = player.skin.x-canvasWidth/2/vp.zoom;
-        vp.y = player.skin.y-canvasHeight/2/vp.zoom;
+        //If we want image always centered:
+      //  vp.x = -(canvasWidth - lvl.bg.img.width*vp.zoom)/2;
+      //  vp.y = -(canvasHeight - lvl.bg.img.height*vp.zoom)/2;
+
+        //If we want character always centered:
+        vp.x = -(canvasWidth)/2 + player.skin.x*vp.zoom;
+        vp.y = -(canvasHeight)/2 + player.skin.y*vp.zoom;
+
+
 
         if(box2dDebug){
             vp.x = 0;
