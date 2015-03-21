@@ -305,7 +305,7 @@
                 reset_lines();
                 break;
             case 'c':
-                player.setPos(2,2);
+                player.setPos(lvl.player.start.x, lvl.player.start.y);
                 break;
             case 's':
                 this.save_level();
