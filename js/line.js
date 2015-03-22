@@ -23,7 +23,7 @@
 
 		update_physics: function(){
 			if(this.body == null){
-				if(this.coords[0].x != this.coords[1].x){
+				if(this.coords[0].x != this.coords[1].x && this.coords[0].y != this.coords[1].y){
 					this.body = this.box2dUtils.addPhysicLine(
 						this.world,this.coords)
 				}

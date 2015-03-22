@@ -41,8 +41,12 @@
     var pigs = [];
     
     var lines = [];
+    var indicators = [];
+
     var lines_parent = null;
     var bg_parent = null;
+    var indicators_parent = null;
+
     var editing_mode = URL_PARAMS['editor'];
 
     var free_move_camera = true;
@@ -87,11 +91,13 @@
 
         bg_parent = new createjs.Container();
         vp.container.addChild(bg_parent);
+        indicators_parent = new createjs.Container();
+        vp.container.addChild(indicators_parent);
         lines_parent = new createjs.Container();
         vp.container.addChild(lines_parent);
 
         player = new Player(vp.container, SCALE, loaded_queue.getResult('bird'));
-        player.createPlayer(world, 0, 0, 17);
+        player.createPlayer(world, 0, 0, 16);
 
         this.load_level(LEVELS[URL_PARAMS['lvl']], function(){ 
             addContactListener();
@@ -122,7 +128,6 @@
         });
     };
 
-
     this.load_level = function(new_lvl, next){
         console.log(new_lvl)
         var queue = new createjs.LoadQueue();
@@ -149,9 +154,20 @@
         this.reset_lines();
         addLines(new_lvl.lines);
         
-        player.setPos(lvl.player.start.x, lvl.player.start.y)
+        if(new_lvl.gravity) {
+            world.SetGravity(new b2Vec2(0, new_lvl.gravity))
+        }else{
+            world.SetGravity(new b2Vec2(0, 10))
+        }
+
+        indicators_parent.removeAllChildren();
+        vp.container.addChild(easelJsUtils.createCircle(lvl.player.start.x, lvl.player.start.y, 50, "red"))
         
-        next()
+        player.setPos(lvl.player.start.x, lvl.player.start.y)
+    
+        if(next !== undefined){
+            next()
+        }
     }
 
     this.save_level = function(){
@@ -328,6 +344,15 @@
                 break;
             case '4':
                 this.load_level(LEVELS['lvl2']);
+                break;
+            case '5':
+                this.load_level(LEVELS['laurie']);
+                break;
+            case '7':
+                this.load_level(LEVELS['parc']);
+                break;
+            case '8':
+                this.load_level(LEVELS['laby']);
                 break;
             case 'u':
                 var last = lines.pop();
