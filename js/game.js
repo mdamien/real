@@ -354,6 +354,11 @@
             case 's':
                 this.save_level();
                 break;
+            case 'i':
+                lvl.player.start.x = player.skin.x/SCALE;
+                lvl.player.start.y = player.skin.y/SCALE;
+                console.log(lvl.player.start);
+                break;
             case '1':
                 this.load_level(LEVELS['base']);
                 break;
@@ -392,17 +397,26 @@
     }
 
     this.display_help = function(){
-        alert("-- HELP ---\n"
-            + "h: help\n"
-            + "e: toogle editor\n"
-            + "    in editor mode: draw lines with the mouse to make new physics lines\n"
-            + "s: save\n"
+        alert(""
+            + "HOW TO PLAY\n"
+            + "right/left: move\n"
+            + "up: jump\n"
             + "c: reset player position\n"
-            + "p: spawn a pig\n"
-            + "r: reset lines\n"
-            + "u: undo last line\n"
+            + "\n"
+            + "HOW TO CREATE A LEVEL\n"
+            + "e: toogle editor\n"
+            + "EDITOR MODE:\n"
+            + "     draw lines with the mouse\n"
+            + "     s: save level\n"
+            + "     r: reset lines\n"
+            + "     u: undo last line\n"
+            + "     i: set spawn point\n"
             + "n: toogle 'new level' dialog\n"
-            + "1-9: load samples levels\n")
+            + "\n"
+            + "OTHERS\n"
+            + "p: spawn a pig\n"
+            + "1-9: load samples levels\n"
+            + "h: help\n")
 
     }
 
