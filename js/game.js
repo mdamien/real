@@ -48,6 +48,8 @@
     var lines = [];
     var indicators = [];
 
+    var new_bg_modal = URL_PARAMS['new'];
+
     var lines_parent = null;
     var bg_parent = null;
     var indicators_parent = null;
@@ -79,10 +81,6 @@
     });
 
     this.load = function() {
-        if(URL_PARAMS['new']){
-            alert('new!');
-        }
-
         $('#loading').html("loading game")
         $('#loading').show()
         loaded_queue.on("complete", function(){
@@ -128,6 +126,7 @@
             
             this.debug_screen_on_off();
             this.editor_on_off();
+            this.modal_on_off();
 
             document.onkeydown = function(event) {
                 return event.keyCode != 38 && event.keyCode != 40;
@@ -188,9 +187,11 @@
 
     this.editor_on_off = function(){
         lines_parent.visible = editing_mode;
-        //$('#editor').toggle(editing_mode);
     }
     
+    this.modal_on_off = function(){
+        $('#editor').toggle(new_bg_modal);
+    }
     
     this.prepareStage = function() {
         gipCanvas = $('#gipCanvas').get(0);
@@ -233,7 +234,10 @@
                         },
                         lines: [],
                     };
-                    load_level_post(new_lvl);
+                    load_level_post(new_lvl, function(){
+                        new_bg_modal = false;
+                        modal_on_off();
+                    });
                 }
                 img.src = fr.result;
             }
@@ -329,6 +333,10 @@
                 box2dDebug = !box2dDebug;
                 this.debug_screen_on_off();
                 break;
+            case 'n':
+                new_bg_modal = !new_bg_modal;
+                this.modal_on_off();
+                break;
             case 'p':
                 var pig = box2dUtils.createPig(world, vp.container, Math.random() * canvasWidth, Math.random() * canvasHeight - 400 / SCALE);
                 pigs.push(pig);
@@ -372,10 +380,10 @@
                 break;
         }
         if(evt.key == '-' || evt.keyCode == 189){
-            vp.zoom -= 0.1;
+            vp.zoom /= 2;
         }
         if(evt.key == '+' || evt.keyCode == 187){
-            vp.zoom += 0.1;
+            vp.zoom *= 2;
         }
     }
 
