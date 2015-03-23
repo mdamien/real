@@ -2,6 +2,9 @@
     this.parse_url_params = function() {
         window.location.hash.slice(1).split('|').forEach(function(param){
             var kv = param.split(':');
+            if(kv.length == 1){
+                kv.push(true);
+            }
             if(kv[1] == 'false'){
                 kv[1] = false;
             }
@@ -13,11 +16,13 @@
     }
 
     var URL_PARAMS = {
+        'new': false,
         editor: false,
         box2d: false,
         lvl: 'lvl2',
     };
     this.parse_url_params();
+    console.log(URL_PARAMS);
     
     var Ticker = createjs.Ticker;
     var gipCanvas;
@@ -74,6 +79,10 @@
     });
 
     this.load = function() {
+        if(URL_PARAMS['new']){
+            alert('new!');
+        }
+
         $('#loading').html("loading game")
         $('#loading').show()
         loaded_queue.on("complete", function(){
@@ -153,7 +162,7 @@
 
         this.reset_lines();
         addLines(new_lvl.lines);
-        
+
         if(new_lvl.gravity) {
             world.SetGravity(new b2Vec2(0, new_lvl.gravity))
         }else{

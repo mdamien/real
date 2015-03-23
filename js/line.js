@@ -17,13 +17,13 @@
 			var line = new createjs.Shape();
 			this.stage.addChild(line);
 			this.skin = line;
-			this.update_graphics();
 			this.update_physics();
+			this.update_graphics();
 		},
 
 		update_physics: function(){
 			if(this.body == null){
-				if(this.coords[0].x != this.coords[1].x && this.coords[0].y != this.coords[1].y){
+				if(this.coords[0].x != this.coords[1].x || this.coords[0].y != this.coords[1].y){
 					this.body = this.box2dUtils.addPhysicLine(
 						this.world,this.coords)
 				}
@@ -37,7 +37,11 @@
 			var line = this.skin;
 			line.graphics.clear();
 			line.graphics.setStrokeStyle(3);
-			line.graphics.beginStroke('orange');
+			var color = 'orange';
+			if (this.body == null){
+				color = 'red';
+			}
+			line.graphics.beginStroke(color);
 			line.graphics.moveTo(this.coords[0].x*this.scale,
 					this.coords[0].y*this.scale);
 			line.graphics.lineTo(this.coords[1].x*this.scale,

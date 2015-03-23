@@ -1,22 +1,14 @@
+PUBLI 1: [GOAL: Before 27 March]
+- intro page
+    - **create new level**
+    - video
+
+- select line to delete
+- redo (history)
+- dynamic world scale
+- select start pos
+
 - load level from file
-
-- nice editor interface (react)
-	- world scale
-	- gravity
-	- lines
-	- background
-	- export
-	- load
-	- player pos
-	- goal
-	- coins
-	- undo
-	- remove lines
-
-- TECHNICAL DEBT: Clean things up
-	- nice state management
-	- break up game.js in multiple files
-	- editor logic elsewhere
 
 - free camera
 
@@ -25,3 +17,13 @@
 - animations
 - sounds
 - hud
+
+- tp points / level set
+- video demo
+- intro screen (choose level or create + help)
+
+
+- top-down levels
+
+- coins
+- goals
