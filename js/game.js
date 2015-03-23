@@ -237,6 +237,7 @@
                     load_level_post(new_lvl, function(){
                         new_bg_modal = false;
                         modal_on_off();
+                        display_help();
                     });
                 }
                 img.src = fr.result;
@@ -344,6 +345,9 @@
             case 'r':
                 reset_lines();
                 break;
+            case 'h':
+                display_help();
+                break;
             case 'c':
                 player.setPos(lvl.player.start.x, lvl.player.start.y);
                 break;
@@ -385,6 +389,21 @@
         if(evt.key == '+' || evt.keyCode == 187){
             vp.zoom *= 2;
         }
+    }
+
+    this.display_help = function(){
+        alert("-- HELP ---\n"
+            + "h: help\n"
+            + "e: toogle editor\n"
+            + "    in editor mode: draw lines with the mouse to make new physics lines\n"
+            + "s: save\n"
+            + "c: reset player position\n"
+            + "p: spawn a pig\n"
+            + "r: reset lines\n"
+            + "u: undo last line\n"
+            + "n: toogle 'new level' dialog\n"
+            + "1-9: load samples levels\n")
+
     }
 
     
