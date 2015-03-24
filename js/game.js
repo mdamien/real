@@ -170,9 +170,6 @@
         }else{
             world.SetGravity(new b2Vec2(0, 10))
         }
-
-        indicators_parent.removeAllChildren();
-        vp.container.addChild(easelJsUtils.createCircle(lvl.player.start.x, lvl.player.start.y, 50, "red"))
         
         player.setPos(lvl.player.start.x, lvl.player.start.y)
     
@@ -271,6 +268,15 @@
 
     this.addLines = function(lines) {
         lines.map(addLine);
+/*
+        var line = new createjs.Shape();
+        var g = line.graphics;
+        g.setStrokeStyle(3);
+        g.beginFill('blue');
+        g.drawCircle(lvl.player.start.x*SCALE, lvl.player.start.y*SCALE, 10);
+        g.endFill();
+        indicators_parent.addChild(line);
+*/
     };
     
     this.startTicker = function(fps) {
@@ -361,6 +367,13 @@
                 break;
             case 'k':
                 lines.filter(function(l){return l.selected }).map(function(l){l.remove()})
+                break;
+            case 't':
+                var x = parseFloat(prompt("TP x:","0"));
+                var y = parseFloat(prompt("TP y:","0"));
+                if(x && y){
+                    player.setPos(x, y);
+                }
                 break;
             case '1':
                 this.load_level(LEVELS['base']);

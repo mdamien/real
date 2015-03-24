@@ -1,8 +1,5 @@
 PUBLI 1: [GOAL: Before 27 March]
-- intro page
-    - **create new level**
-    - video
-    - lvl examples
+- video
 
 - redo (history)
 - dynamic world scale
@@ -15,7 +12,7 @@ PUBLI 1: [GOAL: Before 27 March]
 - jetpack
 
 - animations
-- sounds
+- sounds / music
 - hud
 
 - tp points / level set
@@ -29,4 +26,3 @@ PUBLI 1: [GOAL: Before 27 March]
 BUGS:
 - ramp accel
 - pig spawn
-- export level

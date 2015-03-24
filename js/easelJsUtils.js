@@ -28,21 +28,6 @@
                 return this.createBitmap("img/pig.png", x, y, options);
             },
 
-            createCircle: function(parent, x, y, radius, color, options) {
-                var graphic = new Graphics();
-                var opacity = 1;
-                if (options) {
-                   if (options.opacity) {
-                        opacity = options.opacity;
-                   }
-                }
-                graphic.beginFill(color)
-                graphic.drawCircle(x, y, radius);
-
-                var shape = new Shape(graphic);
-                return shape;
-            }
-
     };
     
 }());

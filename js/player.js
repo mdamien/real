@@ -7,6 +7,7 @@
         this.box2dUtils = new Box2dUtils(scale);
         this.body = null;
         this.jumpContacts = 0;
+        this.jetpack_activated = true;
 
         var bitmap = new createjs.Bitmap(img);
 
@@ -38,10 +39,11 @@
                         this.body.GetBody().GetWorldCenter());
             }
             else {
-                //Already jumping: jetpack mode
-                this.body.GetBody().ApplyImpulse(
-                    new b2Vec2(0, -2),
-                    this.body.GetBody().GetWorldCenter());
+                if(this.jetpack_activated){
+                    this.body.GetBody().ApplyForce(
+                        new b2Vec2(0, -2),
+                        this.body.GetBody().GetWorldCenter());
+                }
             }
         },
         
