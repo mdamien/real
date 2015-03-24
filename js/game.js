@@ -367,6 +367,7 @@
                 break;
             case 'k':
                 lines.filter(function(l){return l.selected }).map(function(l){l.remove()})
+                lvl.lines = lines = lines.filter(function(l){ return !l.selected })
                 break;
             case 't':
                 var x = parseFloat(prompt("TP x:","0"));
