@@ -37,6 +37,12 @@
                         new b2Vec2(0, -12),
                         this.body.GetBody().GetWorldCenter());
             }
+            else {
+                //Already jumping: jetpack mode
+                this.body.GetBody().ApplyImpulse(
+                    new b2Vec2(0, -2),
+                    this.body.GetBody().GetWorldCenter());
+            }
         },
         
         moveRight : function() {
