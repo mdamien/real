@@ -1,10 +1,9 @@
 Thumb = React.createClass({
   render: function(){
-    var href="index.html#lvl:"+this.props.lvl_name;
-    return (<span className="thumb">
-          <a href="{href}">{this.props.name}</a>
-          <img src={this.props.lvl.bg.src} />
-        </span>)
+    var href="index.html#lvl:"+this.props.name;
+    return (<li>
+          <a href={href}>{this.props.name}</a>
+        </li>)
   }
 })
 
@@ -14,7 +13,7 @@ Thumbs = React.createClass({
     for(lvl_name in this.props.levels){
       thumbs.push(<Thumb key={lvl_name} name={lvl_name} lvl={this.props.levels[lvl_name]} />)
     }
-    return <div>{thumbs}</div>;
+    return <div><strong>Examples:</strong><ul>{thumbs}</ul></div>;
   }
 })
 

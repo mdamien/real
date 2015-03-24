@@ -8,6 +8,7 @@
 		this.stage = stage;
 		this.scale = scale;
 		this.coords = coords;
+		this.selected = false;
 		this.init();
 	};
 	
@@ -41,6 +42,9 @@
 			if (this.body == null){
 				color = 'red';
 			}
+			if (this.selected){
+				color = 'orangered';
+			}
 			line.graphics.beginStroke(color);
 			line.graphics.moveTo(this.coords[0].x*this.scale,
 					this.coords[0].y*this.scale);
@@ -61,7 +65,16 @@
 				this.world.DestroyBody(this.body);
 			}
 			this.stage.removeChild(this.skin);
-		}
+		},
+
+		center: function() {
+			return {x:(this.coords[0].x+this.coords[1].x)/2, y:(this.coords[0].y+this.coords[1].y)/2}
+		},
+
+		dist: function(p){
+			var c = this.center()
+			return Math.abs(c.x-p.x)+Math.abs(c.y-p.y);
+		},
 	};
 	
 }());

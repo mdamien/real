@@ -29,6 +29,7 @@
         remove: function(){
             this.container.removeChild(this.skin);
         }
+
     };
     
 }());

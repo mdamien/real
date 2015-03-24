@@ -4,12 +4,11 @@ PUBLI 1: [GOAL: Before 27 March]
     - video
     - lvl examples
 
-- select line to delete
 - redo (history)
 - dynamic world scale
-- select start pos
+- start pos / tp indicators
 
-- load level from file
+- load level from file (level.json with img as base64)
 
 - free camera
 
@@ -20,11 +19,14 @@ PUBLI 1: [GOAL: Before 27 March]
 - hud
 
 - tp points / level set
-- video demo
-- intro screen (choose level or create + help)
-
 
 - top-down levels
 
 - coins
 - goals
+
+
+BUGS:
+- ramp accel
+- pig spawn
+- export level

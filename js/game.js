@@ -60,6 +60,8 @@
 
     var loaded_queue = new createjs.LoadQueue();
 
+    var drawing = false; //drawing a line ?
+
     var vp = {
         x:0,
         y:0,
@@ -113,6 +115,7 @@
             window.addEventListener('mouseup', handleMouseUp);
             window.addEventListener('keydown', handleKeyDown);
             window.addEventListener('keyup', handleKeyUp);
+            window.addEventListener('mousemove', handleMouseMove);
 
             createjs.Touch.enable(stage);
             stage.addEventListener('pressmove', handlePressMove);
@@ -269,13 +272,6 @@
     this.addLines = function(lines) {
         lines.map(addLine);
     };
-
-    this.addPigs = function() {
-        for (var i=0; i<5; i++) {
-            var pig = box2dUtils.createPig(world, vp.container, Math.random() * canvasWidth, Math.random() * canvasHeight - 400 / SCALE);
-            pigs.push(pig);
-        }
-    };
     
     this.startTicker = function(fps) {
         Ticker.setFPS(fps);
@@ -354,10 +350,17 @@
             case 's':
                 this.save_level();
                 break;
+            case 'g':
+                lvl.gravity = parseFloat(prompt("Set gravity","0"));
+                world.SetGravity(new b2Vec2(0, lvl.gravity))
+                break;
             case 'i':
                 lvl.player.start.x = player.skin.x/SCALE;
                 lvl.player.start.y = player.skin.y/SCALE;
                 console.log(lvl.player.start);
+                break;
+            case 'k':
+                lines.filter(function(l){return l.selected }).map(function(l){l.remove()})
                 break;
             case '1':
                 this.load_level(LEVELS['base']);
@@ -411,6 +414,8 @@
             + "     r: reset lines\n"
             + "     u: undo last line\n"
             + "     i: set spawn point\n"
+            + "     k: deleted selected line\n"
+            + "     g: set gravity\n"
             + "n: toogle 'new level' dialog\n"
             + "\n"
             + "OTHERS\n"
@@ -507,17 +512,39 @@
             curr_line = this.addLine([pos,pos]);
         }
         handleMouseMove(evt);
-        window.addEventListener('mousemove', handleMouseMove);
+        drawing = true;
     }
     
     this.handleMouseUp = function(evt) {
-        window.removeEventListener('mousemove', handleMouseMove);
+        drawing = false;
         isMouseDown = false;
     }
     
     this.handleMouseMove = function(evt) {
+        var pos = this.mouseCoords(evt);
+        if(editing_mode && drawing){
+            curr_line.setEnd(pos);
+        }
         if(editing_mode){
-            curr_line.setEnd(this.mouseCoords(evt));
+            var nearest = null;
+            var nearest_score = null;
+            console.lo
+            lines.forEach(function(l){
+                var d = l.dist(pos);
+                if(nearest_score == null || d < nearest_score){
+                    l.selected = true;
+                    nearest = l;
+                    nearest_score = d;
+                }
+            });
+            lines.forEach(function(l){
+                if(l.selected){
+                    if(l != nearest){
+                        l.selected = false;
+                    }
+                    l.update_graphics();
+                }
+            })
         }
     }
 
