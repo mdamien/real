@@ -15,7 +15,10 @@
             frames: { regX: 250, regY: 190, width: 400, height: 370 },
             animations: {
                 stand:0,
-                walk: [0,1]
+                walk: {
+                    frames: [0, 1],
+                    speed: 0.1
+                }
             }
         };
         var spriteSheet = new createjs.SpriteSheet(data);
