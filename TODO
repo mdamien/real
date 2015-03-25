@@ -21,8 +21,9 @@ PUBLI 1: [GOAL: Before 27 March]
 
 - coins
 - goals
-
+- ennemies
 
 BUGS:
 - ramp accel
 - pig spawn
+- stable URL (rawgit 301 preloadjs)
