@@ -390,11 +390,41 @@
                 var pig = box2dUtils.createPig(world, vp.container, Math.random() * canvasWidth, Math.random() * canvasHeight - 400 / SCALE);
                 pigs.push(pig);
                 break;
-            case 'r':
-                reset_lines();
-                break;
             case 'h':
                 display_help();
+                break;
+            case '1':
+                this.load_level(LEVELS['base']);
+                break;
+            case '2':
+                this.load_level(LEVELS['xkcd1']);
+                break;
+            case '3':
+                this.load_level(LEVELS['bertille']);
+                break;
+            case '4':
+                this.load_level(LEVELS['lvl2']);
+                break;
+            case '5':
+                this.load_level(LEVELS['laurie']);
+                break;
+            case '7':
+                this.load_level(LEVELS['parc']);
+                break;
+            case '8':
+                this.load_level(LEVELS['laby']);
+                break;
+            case '9':
+                this.load_level(LEVELS['fleurs']);
+                break;
+            case 'd':
+                debugger;
+                break;
+        }
+        if(editing_mode){
+            switch (c) {
+            case 'r':
+                reset_lines();
                 break;
             case 'c':
                 player.setPos(lvl.player.start.x, lvl.player.start.y);
@@ -437,34 +467,11 @@
                 }
                 refreshIndicators();
                 break;
-            case '1':
-                this.load_level(LEVELS['base']);
-                break;
-            case '2':
-                this.load_level(LEVELS['xkcd1']);
-                break;
-            case '3':
-                this.load_level(LEVELS['bertille']);
-                break;
-            case '4':
-                this.load_level(LEVELS['lvl2']);
-                break;
-            case '5':
-                this.load_level(LEVELS['laurie']);
-                break;
-            case '7':
-                this.load_level(LEVELS['parc']);
-                break;
-            case '8':
-                this.load_level(LEVELS['laby']);
-                break;
             case 'u':
                 var last = lines.pop();
                 last.remove();
                 break;
-            case 'd':
-                debugger;
-                break;
+            }
         }
         if(evt.key == '-' || evt.keyCode == 189){
             vp.zoom /= 2;
@@ -489,6 +496,7 @@
             + "     r: reset lines\n"
             + "     u: undo last line\n"
             + "     i: set spawn point\n"
+            + "     y: set teleport point\n"
             + "     k: deleted selected line\n"
             + "     g: set gravity\n"
             + "n: toogle 'new level' dialog\n"
@@ -507,6 +515,17 @@
 
     
     this.handleInteractions = function() {
+        if(lvl.tps && !editing_mode){
+            lvl.tps.forEach(function(tp){
+                if(Math.sqrt(
+                      Math.pow(tp.x*SCALE - player.skin.x,2)
+                    + Math.pow(tp.y*SCALE - player.skin.y,2)
+                ) < 50){
+                    load_level(LEVELS[tp.lvl]);
+                }
+            })
+        }
+
         for(key in touch_pointers){
             if(key != -1){
                 var coords = touch_pointers[key];
@@ -533,7 +552,7 @@
             player.moveLeft();
         } else if (keys[39]) {
             player.moveRight();
-        }   
+        }
     }
 
     
