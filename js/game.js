@@ -53,6 +53,7 @@
     var lines_parent = null;
     var bg_parent = null;
     var indicators_parent = null;
+    var editor_parent = null;
 
     var editing_mode = URL_PARAMS['editor'];
 
@@ -100,10 +101,12 @@
 
         bg_parent = new createjs.Container();
         vp.container.addChild(bg_parent);
+        editor_parent = new createjs.Container();
+        vp.container.addChild(editor_parent);
         indicators_parent = new createjs.Container();
-        vp.container.addChild(indicators_parent);
+        editor_parent.addChild(indicators_parent);
         lines_parent = new createjs.Container();
-        vp.container.addChild(lines_parent);
+        editor_parent.addChild(lines_parent);
 
         player = new Player(vp.container, SCALE, loaded_queue.getResult('bird'));
         player.createPlayer(world, 0, 0, 16);
@@ -165,6 +168,8 @@
         this.reset_lines();
         addLines(new_lvl.lines);
 
+        refreshIndicators();
+
         if(new_lvl.gravity) {
             world.SetGravity(new b2Vec2(0, new_lvl.gravity))
         }else{
@@ -186,7 +191,7 @@
     }
 
     this.editor_on_off = function(){
-        lines_parent.visible = editing_mode;
+        editor_parent.visible = editing_mode;
     }
     
     this.modal_on_off = function(){
@@ -268,16 +273,57 @@
 
     this.addLines = function(lines) {
         lines.map(addLine);
-/*
-        var line = new createjs.Shape();
-        var g = line.graphics;
+    };
+
+    this.refreshIndicators = function() {
+        indicators_parent.removeAllChildren();
+
+        var spawn = new createjs.Container();
+
+        var circle = new createjs.Shape();
+        var g = circle.graphics;
         g.setStrokeStyle(3);
         g.beginFill('blue');
-        g.drawCircle(lvl.player.start.x*SCALE, lvl.player.start.y*SCALE, 10);
+        g.drawCircle(5, 5, 10);
         g.endFill();
-        indicators_parent.addChild(line);
-*/
-    };
+        circle.alpha = 0.5;
+
+        var text = new createjs.Text("start", "20px Arial", "blue");
+        text.textBaseline = "alphabetic";
+        text.x = 10;
+        text.y = -10;
+        text.alpha = 0.8;
+        spawn.x = lvl.player.start.x*SCALE;
+        spawn.y = lvl.player.start.y*SCALE;
+        spawn.addChild(circle)
+        spawn.addChild(text);
+        indicators_parent.addChild(spawn);
+
+        if(lvl.tps){
+            lvl.tps.forEach(function(tp){
+                var spawn = new createjs.Container();
+                var circle = new createjs.Shape();
+                var color = 'lime';
+                var g = circle.graphics;
+                g.setStrokeStyle(3);
+                g.beginFill(color);
+                g.drawCircle(5, 5, 10);
+                g.endFill();
+                circle.alpha = 0.5;
+
+                var text = new createjs.Text(tp.lvl, "20px Arial", color);
+                text.textBaseline = "alphabetic";
+                text.x = 10;
+                text.y = -10;
+                text.alpha = 0.8;
+                spawn.x = tp.x*SCALE;
+                spawn.y = tp.y*SCALE;
+                spawn.addChild(circle)
+                spawn.addChild(text);
+                indicators_parent.addChild(spawn);
+            });
+        }
+    }
     
     this.startTicker = function(fps) {
         Ticker.setFPS(fps);
@@ -363,18 +409,33 @@
             case 'i':
                 lvl.player.start.x = player.skin.x/SCALE;
                 lvl.player.start.y = player.skin.y/SCALE;
-                console.log(lvl.player.start);
+                refreshIndicators();
                 break;
             case 'k':
                 lines.filter(function(l){return l.selected }).map(function(l){l.remove()})
                 lvl.lines = lines = lines.filter(function(l){ return !l.selected })
                 break;
+                /*
             case 't':
                 var x = parseFloat(prompt("TP x:","0"));
                 var y = parseFloat(prompt("TP y:","0"));
                 if(x && y){
                     player.setPos(x, y);
                 }
+                break;
+                */ //TODO: deasactivate theses shortcuts when "ctrl" is pressed
+
+            case 'y':
+                var x = player.skin.x/SCALE;
+                var y = player.skin.y/SCALE;
+                var lvl_name = prompt("lvl","")
+                if(lvl_name.length > 0){
+                    if(lvl.tps === undefined){
+                        lvl.tps = [];
+                    }
+                    lvl.tps.push({lvl:lvl_name, x:x, y:y})
+                }
+                refreshIndicators();
                 break;
             case '1':
                 this.load_level(LEVELS['base']);
