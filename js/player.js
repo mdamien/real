@@ -9,8 +9,22 @@
         this.jumpContacts = 0;
         this.jetpack_activated = true;
 
-        var bitmap = new createjs.Bitmap(img);
+        //SpriteSheet data for Sprite animation.
+        var data = {
+            images: ["img/bird.png", "img/carotte.png"],
+            frames: { regX: 250, regY: 190, width: 400, height: 370 },
+            animations: {
+                stand:0,
+                walk: [0,1]
+            }
+        };
+        var spriteSheet = new createjs.SpriteSheet(data);
+        var bitmap = new createjs.Sprite(spriteSheet, "walk");
+        bitmap.framerate = 5;
 
+        bitmap.gotoAndPlay("walk");
+
+    //    var bitmap = new createjs.Bitmap(img);
         bitmap.x = this.x;
         bitmap.y = this.y;
 
@@ -18,8 +32,8 @@
         bitmap.scaleX = this.BITMAP_SCALE;
         bitmap.scaleY = this.BITMAP_SCALE;
 
-        bitmap.regX = 250;
-        bitmap.regY = 190;
+      //  bitmap.regX = 250;
+    //    bitmap.regY = 190;
 
         this.stage.addChild(bitmap);
 
@@ -65,6 +79,6 @@
 
         setPos: function(x, y) {
             this.body.m_body.SetPosition({x:x, y:y});
-        },
+        }
     }
 }());
