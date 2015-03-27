@@ -25,7 +25,7 @@
         var bitmap = new createjs.Sprite(spriteSheet, "walk");
         bitmap.framerate = 5;
 
-        bitmap.gotoAndPlay("walk");
+        bitmap.gotoAndPlay("stand");
 
     //    var bitmap = new createjs.Bitmap(img);
         bitmap.x = this.x;

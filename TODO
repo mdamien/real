@@ -1,11 +1,15 @@
 PUBLI 1: [GOAL: Before 27 March]
 - video
 
+IDEAS:
+
+    -- TOP --
+- load level from file / url
+- editor real interface (buttons)
+
+    -- OTHERS --
 - redo (history)
 - dynamic world scale
-- start pos / tp indicators
-
-- load level from file (level.json with img as base64)
 
 - free camera
 
@@ -23,7 +27,23 @@ PUBLI 1: [GOAL: Before 27 March]
 - goals
 - ennemies
 
+- level sharing website
+
 BUGS:
 - ramp accel
 - pig spawn
 - stable URL (rawgit 301 preloadjs)
+
+
+FEEDBACK:
+- no goals
+- hard to add lines (needs panning)
+- too static: dynamic items, ennemies,...
+- animations
+
+
+PIXLINGS (similar game):
+- step down and one-way platforms
+- jetpack like
+- paint-like wall drawing
+feedback: mario-like scrolling, online marketplace, dynamic items, 3D pictures
