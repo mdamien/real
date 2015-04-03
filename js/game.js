@@ -18,7 +18,6 @@
     var URL_PARAMS = {
         'new': false,
         editor: false,
-        box2d: false,
         lvl: 'lvl2',
     };
     this.parse_url_params();
@@ -28,7 +27,6 @@
     var gipCanvas;
     var stage;
     
-    var box2dCanvas; 
     var box2dUtils; 
     var context;
     var SCALE = 30; 
@@ -69,8 +67,6 @@
         zoom:1,
         container: new createjs.Container(),
     }
-
-    var box2dDebug = URL_PARAMS['box2d'];
 
     var lvl = null;
     
@@ -114,22 +110,22 @@
         this.load_level(LEVELS[URL_PARAMS['lvl']], function(){ 
             addContactListener();
 
-            window.addEventListener('mousedown', handleMouseDown);
-            window.addEventListener('mouseup', handleMouseUp);
+            $('#gipCanvas').on('mousedown', handleMouseDown.bind(this));
+            $('#gipCanvas').on('mouseup', handleMouseUp.bind(this));
             window.addEventListener('keydown', handleKeyDown);
             window.addEventListener('keyup', handleKeyUp);
-            window.addEventListener('mousemove', handleMouseMove);
+            $('#gipCanvas').on('mousemove', handleMouseMove.bind(this));
 
             createjs.Touch.enable(stage);
             stage.addEventListener('pressmove', handlePressMove);
             stage.addEventListener('pressup', handlePressUp);
 
             $('#editor-background').on('change', this.editor_load_bg)
+            $('#editor .undo').on('click', this.editor_undo)
 
             window.onresize = function(){ onResize(); }
             onResize();
             
-            this.debug_screen_on_off();
             this.editor_on_off();
             this.modal_on_off();
 
@@ -138,7 +134,7 @@
             }
 
             startTicker(30);
-        });
+        }.bind(this));
     };
 
     this.load_level = function(new_lvl, next){
@@ -199,6 +195,7 @@
     
     this.prepareStage = function() {
         gipCanvas = $('#gipCanvas').get(0);
+        canvasPosition = $(gipCanvas).position();
         stage = new createjs.Stage(gipCanvas);
         easelJsUtils = new EaselJsUtils(stage);
         stage.addChild(vp.container)
@@ -206,11 +203,7 @@
     
     
     this.prepareBox2d = function() {
-        box2dCanvas = $('#box2dCanvas').get(0);
-        canvasWidth = parseInt(box2dCanvas.width);
-        canvasHeight = parseInt(box2dCanvas.height);
-        canvasPosition = $(box2dCanvas).position();
-        context = box2dCanvas.getContext('2d');
+        context = gipCanvas.getContext('2d');
         box2dUtils = new Box2dUtils(SCALE);
         world = box2dUtils.createWorld(context); 
     };
@@ -348,22 +341,12 @@
         vp.x = -(canvasWidth)/2 + player.skin.x*vp.zoom;
         vp.y = -(canvasHeight)/2 + player.skin.y*vp.zoom;
 
-
-
-        if(box2dDebug){
-            vp.x = 0;
-            vp.y = 0;
-        }
-
         vp.container.x = -vp.x;
         vp.container.y = -vp.y;
 
         vp.container.scaleX = vp.zoom
         vp.container.scaleY = vp.zoom
 
-        if(box2dDebug){
-            world.DrawDebugData();
-        }
         stage.update();
     };
     
@@ -376,10 +359,6 @@
             case 'e':
                 editing_mode = !editing_mode;
                 this.editor_on_off()
-                break;
-            case 'b':
-                box2dDebug = !box2dDebug;
-                this.debug_screen_on_off();
                 break;
             case 'n':
                 new_bg_modal = !new_bg_modal;
@@ -467,8 +446,7 @@
                 refreshIndicators();
                 break;
             case 'u':
-                var last = lines.pop();
-                last.remove();
+                this.editor_undo();
                 break;
             }
         }
@@ -479,6 +457,13 @@
             vp.zoom *= 2;
         }
     }
+
+    this.editor_undo = function(){
+        var last = lines.pop();
+        last.remove();
+        console.log('line removed', lines)
+        return true;
+    };
 
     this.display_help = function(){
         alert(""
@@ -669,14 +654,6 @@
         }
         return true;
     }
-    
-    this.debug_screen_on_off = function() {
-        if (box2dDebug) {
-            $(box2dCanvas).css('opacity', 1);
-        } else {
-            $(box2dCanvas).css('opacity', 0);
-        }
-    };
 
     
     this.addContactListener = function() {
@@ -725,8 +702,5 @@
 
         canvasWidth = w;
         canvasHeight = h;
-
-        box2dCanvas.width = w;
-        box2dCanvas.height = h;
     }
 }());

@@ -59,6 +59,7 @@ body, html {
 }
 
 #editor {
+    pointer-events: none;
     background-color: rgba(0,0,0,0);
     position: absolute;
     width: 100%;
@@ -69,12 +70,19 @@ body, html {
 }
 
 #editor a {
-    display: inline-block;
+    pointer-events: all;
     background: #222;
     border: 1px solid white;
     padding:10px;
     color:white;
-    border-radius:10px
+    border-radius:10px;
+    transition: all 1s;
+}
+
+#editor a:hover {
+    background: #fff;
+    color: black;
+    cursor: pointer;
 }
 
 #editor ul {
