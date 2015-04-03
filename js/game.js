@@ -125,7 +125,6 @@
             stage.addEventListener('pressup', handlePressUp);
 
             $('#editor-background').on('change', this.editor_load_bg)
-            $('#save').on('click', this.save_level)
 
             window.onresize = function(){ onResize(); }
             onResize();
@@ -195,7 +194,7 @@
     }
     
     this.modal_on_off = function(){
-        $('#editor').toggle(new_bg_modal);
+        $('#new_level').toggle(new_bg_modal);
     }
     
     this.prepareStage = function() {

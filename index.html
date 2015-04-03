@@ -1,23 +1,30 @@
 <!doctype html>
 <html lang="fr">
 <head>
-	<meta charset="utf-8">
-	<title>Real - press h for help</title>
-	<meta name="mobile-web-app-capable" content="yes">
-	<link rel="stylesheet" href="css/style.css" />
+    <meta charset="utf-8">
+    <title>Real - press h for help</title>
+    <meta name="mobile-web-app-capable" content="yes">
+    <link rel="stylesheet" href="css/style.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
 </head>
 <body>
 <div id="divCanvas">
-	<h1 id="loading">Loading</h1>
-	<canvas id="gipCanvas"></canvas>
-	<canvas id="box2dCanvas"></canvas>
+    <h1 id="loading">Loading</h1>
+    <canvas id="gipCanvas"></canvas>
+    <canvas id="box2dCanvas"></canvas>
+</div>
+<div id="new_level">
+    <h3>New level</h3>
+    <label>Scale:</label><input type="text" id="scale" value="1.00" />
+    <input type="file" id="editor-background" />
+    <a id="save" download="level.json" href="" style="display:none">save</a>
 </div>
 <div id="editor">
-	<h3>New level</h3>
-	<label>Scale:</label><input type="text" id="scale" value="1.00" />
-	<input type="file" id="editor-background" />
-	<a id="save" download="level.json" href="" style="display:none">save</a>
+    <ul>
+        <li><a class="add_lines">+</a></li>
+        <li><a class="remove_lines">-</a></li>
+        <li><a class="reset_lines">R</a></li>
+    </ul>
 </div>
 
 <!-- libs -->
