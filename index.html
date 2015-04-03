@@ -4,6 +4,8 @@
     <meta charset="utf-8">
     <title>Real - press h for help</title>
     <meta name="mobile-web-app-capable" content="yes">
+    <link rel="stylesheet" href="css/bootstrap.min.css" />
+    <link rel="stylesheet" href="css/bootstrap-theme.min.css" />
     <link rel="stylesheet" href="css/style.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
 </head>
@@ -14,10 +16,28 @@
     <canvas id="box2dCanvas"></canvas>
 </div>
 <div id="new_level">
-    <h3>New level</h3>
-    <label>Scale:</label><input type="text" id="scale" value="1.00" />
-    <input type="file" id="editor-background" />
-    <a id="save" download="level.json" href="" style="display:none">save</a>
+    <div class="panel panel-primary">
+        <div class="panel-heading">
+            <h3 class="panel-title">New level</h3>
+        </div>
+        <div class="panel-body">
+            <form class="form-horizontal">
+                <div class="form-group">
+                    <label for="scale" class="col-sm-2 control-label">Scale</label>
+                    <div class="col-sm-10">
+                        <input type="number" step="0.1" class="form-control" id="scale" value="1.0">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="editor-background" class="col-sm-2 control-label">File</label>
+                    <div class="col-sm-10">
+                        <input type="file" id="editor-background">
+                        <p class="help-block">Background image file.</p>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
 </div>
 <div id="editor">
     <ul>
