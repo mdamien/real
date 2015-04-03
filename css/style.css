@@ -77,6 +77,43 @@ body, html {
     border-radius:10px
 }
 
+#editor button {
+    -webkit-border-radius: 10;
+    -moz-border-radius: 10;
+    border-radius: 10px;
+    color: #ffffff;
+    font-size: 15px;
+    background: #3498db;
+    padding: 10px;
+    text-decoration: none;
+    border: 1px solid white;
+}
+
+#editor button.undo {
+    background: #62db3b;
+}
+
+#editor button.undo:hover {
+    background: #8edb61;
+}
+
+
+#editor button.eraser {
+    background: #c54139;
+}
+
+#editor button.eraser:hover {
+    background: #db1021;
+}
+
+#editor button.pencil {
+    background: #3498db;
+}
+
+#editor button.pencil:hover {
+    background: #3cb0fd;
+}
+
 #editor ul {
     list-style: none;
 }
