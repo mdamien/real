@@ -63,31 +63,71 @@ body, html {
     background-color: rgba(0,0,0,0);
     position: absolute;
     width: 100%;
-    height: 70px;
+    height: 100px;
     bottom: 0px;
     font-family: sans-serif;
     font-size: 0.8rem;
-}
-
-#editor a {
-    pointer-events: all;
-    background: #222;
-    border: 1px solid white;
-    padding:10px;
-    color:white;
-    border-radius:10px;
-    transition: all 1s;
+    display: none;
 }
 
 #editor a:hover {
     background: #fff;
     color: black;
+}
+
+#editor button {
+    pointer-events: all;
+    border-radius: 10px;
+    color: white;
+    font-size: 15px;
+    background: #3498db;
+    padding: 10px;
+    text-decoration: none;
+    border: 1px solid white;
+    transition: all 0.1s;
+}
+
+#editor button:hover {
     cursor: pointer;
+}
+
+#editor button.active {
+    box-shadow: 0 0 30px white;
+    padding: 20px;
+}
+
+#editor button.undo {
+    background: #62db3b;
+}
+
+#editor button.undo:hover {
+    background: #8edb61;
+}
+
+#editor button.erase {
+    background: #c54139;
+}
+
+#editor button.erase:hover {
+    background: #db1021;
+}
+
+#editor button.draw {
+    background: #3498db;
+}
+
+#editor button.draw:hover {
+    background: #3cb0fd;
 }
 
 #editor ul {
     list-style: none;
+    text-align: center;
 }
 #editor li {
     display: inline
+}
+
+#editor li.spacer{
+    margin: 20px;
 }

@@ -1,4 +1,6 @@
 (function() {
+    var EDITOR_MODES = {DRAW:'draw', ERASE:'erase', SPAWN:'spawn'};
+
     this.parse_url_params = function() {
         window.location.hash.slice(1).split('|').forEach(function(param){
             var kv = param.split(':');
@@ -18,6 +20,7 @@
     var URL_PARAMS = {
         'new': false,
         editor: false,
+        editor_mode: EDITOR_MODES.DRAW,
         lvl: 'lvl2',
     };
     this.parse_url_params();
@@ -53,7 +56,8 @@
     var indicators_parent = null;
     var editor_parent = null;
 
-    var editing_mode = URL_PARAMS['editor'];
+    var editor_activated = URL_PARAMS['editor'];
+    var editor_mode = URL_PARAMS['editor_mode']
 
     var free_move_camera = true;
 
@@ -120,8 +124,10 @@
             stage.addEventListener('pressmove', handlePressMove);
             stage.addEventListener('pressup', handlePressUp);
 
-            $('#editor-background').on('change', this.editor_load_bg)
-            $('#editor .undo').on('click', this.editor_undo)
+            $('#editor-background').on('change', this.editor_load_bg.bind(this))
+            $('#editor .undo').on('click', this.editor_undo.bind(this))
+            $('#editor .draw').on('click', this.editor_draw_mode.bind(this))
+            $('#editor .erase').on('click', this.editor_erase_mode.bind(this))
 
             window.onresize = function(){ onResize(); }
             onResize();
@@ -135,7 +141,7 @@
 
             startTicker(30);
         }.bind(this));
-    };
+    }
 
     this.load_level = function(new_lvl, next){
         console.log(new_lvl)
@@ -186,7 +192,10 @@
     }
 
     this.editor_on_off = function(){
-        editor_parent.visible = editing_mode;
+        editor_parent.visible = editor_activated;
+        $('#editor').toggle(editor_activated);
+        $('#editor button').toggleClass('active', false)
+        $('#editor button.'+editor_mode).toggleClass('active', true)
     }
     
     this.modal_on_off = function(){
@@ -357,7 +366,7 @@
 
         switch (c) {
             case 'e':
-                editing_mode = !editing_mode;
+                editor_activated = !editor_activated;
                 this.editor_on_off()
                 break;
             case 'n':
@@ -399,7 +408,7 @@
                 debugger;
                 break;
         }
-        if(editing_mode){
+        if(editor_activated){
             switch (c) {
             case 'r':
                 reset_lines();
@@ -420,8 +429,7 @@
                 refreshIndicators();
                 break;
             case 'k':
-                lines.filter(function(l){return l.selected }).map(function(l){l.remove()})
-                lvl.lines = lines = lines.filter(function(l){ return !l.selected })
+                this.editor_remove_selected_lines();
                 break;
                 /*
             case 't':
@@ -461,9 +469,57 @@
     this.editor_undo = function(){
         var last = lines.pop();
         last.remove();
-        console.log('line removed', lines)
         return true;
-    };
+    }
+
+    this.editor_remove_selected_lines = function(){
+        lines.filter(function(l){return l.selected }).map(function(l){l.remove()})
+        lvl.lines = lines = lines.filter(function(l){ return !l.selected })
+    }
+
+    this.update_selected_lines = function(pos){
+        var nearest = null;
+        var nearest_score = null;
+        lines.forEach(function(l){
+            var d = l.dist(pos);
+            if(nearest_score == null || d < nearest_score){
+                l.selected = true;
+                nearest = l;
+                nearest_score = d;
+            }
+        });
+        lines.forEach(function(l){
+            if(l.selected){
+                if(l != nearest){
+                    l.selected = false;
+                }
+                l.update_graphics();
+            }
+        })
+    }
+
+    this.editor_draw_mode = function(){
+        this.change_mode('draw');
+
+        //remove selected lines
+        lines.forEach(function(l){
+            if(l.selected){
+                l.selected = false;
+            }
+            l.update_graphics();
+        });
+        return true;
+    }
+
+    this.editor_erase_mode = function(){
+        this.change_mode('erase')
+        return true;
+    }
+
+    this.change_mode = function(mode){
+        editor_mode = mode;
+        this.editor_on_off();
+    }
 
     this.display_help = function(){
         alert(""
@@ -499,7 +555,7 @@
 
     
     this.handleInteractions = function() {
-        if(lvl.tps && !editing_mode){
+        if(lvl.tps && !editor_activated){
             lvl.tps.forEach(function(tp){
                 if(Math.sqrt(
                       Math.pow(tp.x*SCALE - player.skin.x,2)
@@ -586,11 +642,14 @@
     this.handleMouseDown = function(evt) {
         isMouseDown = true;
         var pos = this.mouseCoords(evt);
-        if(editing_mode){
-            curr_line = this.addLine([pos,pos]);
+        if(editor_activated){
+            if(editor_mode == EDITOR_MODES.DRAW){
+                curr_line = this.addLine([pos,pos]);
+                drawing = true;
+            }else if(editor_mode == EDITOR_MODES.ERASE){
+                this.editor_remove_selected_lines();
+            }
         }
-        handleMouseMove(evt);
-        drawing = true;
     }
     
     this.handleMouseUp = function(evt) {
@@ -600,29 +659,14 @@
     
     this.handleMouseMove = function(evt) {
         var pos = this.mouseCoords(evt);
-        if(editing_mode && drawing){
-            curr_line.setEnd(pos);
-        }
-        if(editing_mode){
-            var nearest = null;
-            var nearest_score = null;
-            console.lo
-            lines.forEach(function(l){
-                var d = l.dist(pos);
-                if(nearest_score == null || d < nearest_score){
-                    l.selected = true;
-                    nearest = l;
-                    nearest_score = d;
+        if(editor_activated){
+            if(editor_mode == EDITOR_MODES.DRAW){
+                if(drawing){
+                    curr_line.setEnd(pos);
                 }
-            });
-            lines.forEach(function(l){
-                if(l.selected){
-                    if(l != nearest){
-                        l.selected = false;
-                    }
-                    l.update_graphics();
-                }
-            })
+            }else if(editor_mode == EDITOR_MODES.ERASE){
+                this.update_selected_lines(pos);
+            }
         }
     }
 
