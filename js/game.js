@@ -128,6 +128,7 @@
             $('#editor .undo').on('click', this.editor_undo.bind(this))
             $('#editor .draw').on('click', this.editor_draw_mode.bind(this))
             $('#editor .erase').on('click', this.editor_erase_mode.bind(this))
+            $('#editor .spawn').on('click', this.editor_spawn_mode.bind(this))
 
             window.onresize = function(){ onResize(); }
             onResize();
@@ -196,6 +197,14 @@
         $('#editor').toggle(editor_activated);
         $('#editor button').toggleClass('active', false)
         $('#editor button.'+editor_mode).toggleClass('active', true)
+
+        //remove selected lines
+        lines.forEach(function(l){
+            if(l.selected){
+                l.selected = false;
+            }
+            l.update_graphics();
+        });
     }
     
     this.modal_on_off = function(){
@@ -424,12 +433,10 @@
                 world.SetGravity(new b2Vec2(0, lvl.gravity))
                 break;
             case 'i':
-                lvl.player.start.x = player.skin.x/SCALE;
-                lvl.player.start.y = player.skin.y/SCALE;
-                refreshIndicators();
+                this.editor_set_spawn({x:player.skin.x/SCALE, y:player.skin.y/SCALE})
                 break;
             case 'k':
-                this.editor_remove_selected_lines();
+                this.editor_erase_mode();
                 break;
                 /*
             case 't':
@@ -501,13 +508,6 @@
     this.editor_draw_mode = function(){
         this.change_mode('draw');
 
-        //remove selected lines
-        lines.forEach(function(l){
-            if(l.selected){
-                l.selected = false;
-            }
-            l.update_graphics();
-        });
         return true;
     }
 
@@ -515,6 +515,12 @@
         this.change_mode('erase')
         return true;
     }
+
+    this.editor_spawn_mode = function(){
+        this.change_mode('spawn')
+        return true;
+    }
+
 
     this.change_mode = function(mode){
         editor_mode = mode;
@@ -648,6 +654,8 @@
                 drawing = true;
             }else if(editor_mode == EDITOR_MODES.ERASE){
                 this.editor_remove_selected_lines();
+            }else if(editor_mode == EDITOR_MODES.SPAWN){
+                this.editor_set_spawn(pos);
             }
         }
     }
@@ -655,6 +663,9 @@
     this.handleMouseUp = function(evt) {
         drawing = false;
         isMouseDown = false;
+        if(editor_mode == EDITOR_MODES.SPAWN){
+            this.editor_draw_mode();
+        }
     }
     
     this.handleMouseMove = function(evt) {
@@ -666,6 +677,8 @@
                 }
             }else if(editor_mode == EDITOR_MODES.ERASE){
                 this.update_selected_lines(pos);
+            }else if(editor_mode == EDITOR_MODES.SPAWN){
+                this.editor_set_spawn(pos);
             }
         }
     }
@@ -678,16 +691,11 @@
         delete touch_pointers[evt.pointerID];
     }
 
-    this.getBodyAtMouse = function() {
-        selectedBody = null;
-        mouseVec = new b2Vec2(mouseX, mouseY);
-        var aabb = new b2AABB();
-        aabb.lowerBound.Set(mouseX, mouseY);
-        aabb.upperBound.Set(mouseX, mouseY);
-        world.QueryAABB(getBodyCallBack, aabb);
-        return selectedBody;
+    this.editor_set_spawn = function(pos){
+        lvl.player.start.x = pos.x;
+        lvl.player.start.y = pos.y;
+        refreshIndicators();
     }
-    
     
     this.getBodyCallBack = function(fixture) {
         if (fixture.GetBody().GetType() != b2Body.b2_staticBody) {
