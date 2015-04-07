@@ -12,7 +12,7 @@
         //SpriteSheet data for Sprite animation.
         var data = {
             images: ["img/bird.png", "img/carotte.png"],
-            frames: { regX: 250, regY: 190, width: 400, height: 370 },
+            frames: { regX: 250, regY: 220, width: 400, height: 400 },
             animations: {
                 stand:0,
                 walk: {

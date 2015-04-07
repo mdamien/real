@@ -1,4 +1,6 @@
 (function() {
+    var EDITOR_MODES = {DRAW:'draw', ERASE:'erase', SPAWN:'spawn'};
+
     this.parse_url_params = function() {
         window.location.hash.slice(1).split('|').forEach(function(param){
             var kv = param.split(':');
@@ -18,7 +20,7 @@
     var URL_PARAMS = {
         'new': false,
         editor: false,
-        box2d: false,
+        editor_mode: EDITOR_MODES.DRAW,
         lvl: 'lvl2',
     };
     this.parse_url_params();
@@ -28,7 +30,6 @@
     var gipCanvas;
     var stage;
     
-    var box2dCanvas; 
     var box2dUtils; 
     var context;
     var SCALE = 30; 
@@ -55,7 +56,8 @@
     var indicators_parent = null;
     var editor_parent = null;
 
-    var editing_mode = URL_PARAMS['editor'];
+    var editor_activated = URL_PARAMS['editor'];
+    var editor_mode = URL_PARAMS['editor_mode']
 
     var free_move_camera = true;
 
@@ -69,8 +71,6 @@
         zoom:1,
         container: new createjs.Container(),
     }
-
-    var box2dDebug = URL_PARAMS['box2d'];
 
     var lvl = null;
     
@@ -114,22 +114,25 @@
         this.load_level(LEVELS[URL_PARAMS['lvl']], function(){ 
             addContactListener();
 
-            window.addEventListener('mousedown', handleMouseDown);
-            window.addEventListener('mouseup', handleMouseUp);
+            $('#gipCanvas').on('mousedown', handleMouseDown.bind(this));
+            $('#gipCanvas').on('mouseup', handleMouseUp.bind(this));
             window.addEventListener('keydown', handleKeyDown);
             window.addEventListener('keyup', handleKeyUp);
-            window.addEventListener('mousemove', handleMouseMove);
+            $('#gipCanvas').on('mousemove', handleMouseMove.bind(this));
 
             createjs.Touch.enable(stage);
             stage.addEventListener('pressmove', handlePressMove);
             stage.addEventListener('pressup', handlePressUp);
 
-            $('#editor-background').on('change', this.editor_load_bg)
+            $('#editor-background').on('change', this.editor_load_bg.bind(this))
+            $('#editor .undo').on('click', this.editor_undo.bind(this))
+            $('#editor .draw').on('click', this.editor_draw_mode.bind(this))
+            $('#editor .erase').on('click', this.editor_erase_mode.bind(this))
+            $('#editor .spawn').on('click', this.editor_spawn_mode.bind(this))
 
             window.onresize = function(){ onResize(); }
             onResize();
             
-            this.debug_screen_on_off();
             this.editor_on_off();
             this.modal_on_off();
 
@@ -138,8 +141,8 @@
             }
 
             startTicker(30);
-        });
-    };
+        }.bind(this));
+    }
 
     this.load_level = function(new_lvl, next){
         console.log(new_lvl)
@@ -190,7 +193,18 @@
     }
 
     this.editor_on_off = function(){
-        editor_parent.visible = editing_mode;
+        editor_parent.visible = editor_activated;
+        $('#editor').toggle(editor_activated);
+        $('#editor button').toggleClass('active', false)
+        $('#editor button.'+editor_mode).toggleClass('active', true)
+
+        //remove selected lines
+        lines.forEach(function(l){
+            if(l.selected){
+                l.selected = false;
+            }
+            l.update_graphics();
+        });
     }
     
     this.modal_on_off = function(){
@@ -199,6 +213,7 @@
     
     this.prepareStage = function() {
         gipCanvas = $('#gipCanvas').get(0);
+        canvasPosition = $(gipCanvas).position();
         stage = new createjs.Stage(gipCanvas);
         easelJsUtils = new EaselJsUtils(stage);
         stage.addChild(vp.container)
@@ -206,11 +221,7 @@
     
     
     this.prepareBox2d = function() {
-        box2dCanvas = $('#box2dCanvas').get(0);
-        canvasWidth = parseInt(box2dCanvas.width);
-        canvasHeight = parseInt(box2dCanvas.height);
-        canvasPosition = $(box2dCanvas).position();
-        context = box2dCanvas.getContext('2d');
+        context = gipCanvas.getContext('2d');
         box2dUtils = new Box2dUtils(SCALE);
         world = box2dUtils.createWorld(context); 
     };
@@ -348,22 +359,12 @@
         vp.x = -(canvasWidth)/2 + player.skin.x*vp.zoom;
         vp.y = -(canvasHeight)/2 + player.skin.y*vp.zoom;
 
-
-
-        if(box2dDebug){
-            vp.x = 0;
-            vp.y = 0;
-        }
-
         vp.container.x = -vp.x;
         vp.container.y = -vp.y;
 
         vp.container.scaleX = vp.zoom
         vp.container.scaleY = vp.zoom
 
-        if(box2dDebug){
-            world.DrawDebugData();
-        }
         stage.update();
     };
     
@@ -374,12 +375,8 @@
 
         switch (c) {
             case 'e':
-                editing_mode = !editing_mode;
+                editor_activated = !editor_activated;
                 this.editor_on_off()
-                break;
-            case 'b':
-                box2dDebug = !box2dDebug;
-                this.debug_screen_on_off();
                 break;
             case 'n':
                 new_bg_modal = !new_bg_modal;
@@ -420,7 +417,7 @@
                 debugger;
                 break;
         }
-        if(editing_mode){
+        if(editor_activated){
             switch (c) {
             case 'r':
                 reset_lines();
@@ -436,13 +433,10 @@
                 world.SetGravity(new b2Vec2(0, lvl.gravity))
                 break;
             case 'i':
-                lvl.player.start.x = player.skin.x/SCALE;
-                lvl.player.start.y = player.skin.y/SCALE;
-                refreshIndicators();
+                this.editor_set_spawn({x:player.skin.x/SCALE, y:player.skin.y/SCALE})
                 break;
             case 'k':
-                lines.filter(function(l){return l.selected }).map(function(l){l.remove()})
-                lvl.lines = lines = lines.filter(function(l){ return !l.selected })
+                this.editor_erase_mode();
                 break;
                 /*
             case 't':
@@ -467,8 +461,7 @@
                 refreshIndicators();
                 break;
             case 'u':
-                var last = lines.pop();
-                last.remove();
+                this.editor_undo();
                 break;
             }
         }
@@ -478,6 +471,60 @@
         if(evt.key == '+' || evt.keyCode == 187){
             vp.zoom *= 2;
         }
+    }
+
+    this.editor_undo = function(){
+        var last = lines.pop();
+        last.remove();
+        return true;
+    }
+
+    this.editor_remove_selected_lines = function(){
+        lines.filter(function(l){return l.selected }).map(function(l){l.remove()})
+        lvl.lines = lines = lines.filter(function(l){ return !l.selected })
+    }
+
+    this.update_selected_lines = function(pos){
+        var nearest = null;
+        var nearest_score = null;
+        lines.forEach(function(l){
+            var d = l.dist(pos);
+            if(nearest_score == null || d < nearest_score){
+                l.selected = true;
+                nearest = l;
+                nearest_score = d;
+            }
+        });
+        lines.forEach(function(l){
+            if(l.selected){
+                if(l != nearest){
+                    l.selected = false;
+                }
+                l.update_graphics();
+            }
+        })
+    }
+
+    this.editor_draw_mode = function(){
+        this.change_mode('draw');
+
+        return true;
+    }
+
+    this.editor_erase_mode = function(){
+        this.change_mode('erase')
+        return true;
+    }
+
+    this.editor_spawn_mode = function(){
+        this.change_mode('spawn')
+        return true;
+    }
+
+
+    this.change_mode = function(mode){
+        editor_mode = mode;
+        this.editor_on_off();
     }
 
     this.display_help = function(){
@@ -514,7 +561,7 @@
 
     
     this.handleInteractions = function() {
-        if(lvl.tps && !editing_mode){
+        if(lvl.tps && !editor_activated){
             lvl.tps.forEach(function(tp){
                 if(Math.sqrt(
                       Math.pow(tp.x*SCALE - player.skin.x,2)
@@ -601,43 +648,38 @@
     this.handleMouseDown = function(evt) {
         isMouseDown = true;
         var pos = this.mouseCoords(evt);
-        if(editing_mode){
-            curr_line = this.addLine([pos,pos]);
+        if(editor_activated){
+            if(editor_mode == EDITOR_MODES.DRAW){
+                curr_line = this.addLine([pos,pos]);
+                drawing = true;
+            }else if(editor_mode == EDITOR_MODES.ERASE){
+                this.editor_remove_selected_lines();
+            }else if(editor_mode == EDITOR_MODES.SPAWN){
+                this.editor_set_spawn(pos);
+            }
         }
-        handleMouseMove(evt);
-        drawing = true;
     }
     
     this.handleMouseUp = function(evt) {
         drawing = false;
         isMouseDown = false;
+        if(editor_mode == EDITOR_MODES.SPAWN){
+            this.editor_draw_mode();
+        }
     }
     
     this.handleMouseMove = function(evt) {
         var pos = this.mouseCoords(evt);
-        if(editing_mode && drawing){
-            curr_line.setEnd(pos);
-        }
-        if(editing_mode){
-            var nearest = null;
-            var nearest_score = null;
-            console.lo
-            lines.forEach(function(l){
-                var d = l.dist(pos);
-                if(nearest_score == null || d < nearest_score){
-                    l.selected = true;
-                    nearest = l;
-                    nearest_score = d;
+        if(editor_activated){
+            if(editor_mode == EDITOR_MODES.DRAW){
+                if(drawing){
+                    curr_line.setEnd(pos);
                 }
-            });
-            lines.forEach(function(l){
-                if(l.selected){
-                    if(l != nearest){
-                        l.selected = false;
-                    }
-                    l.update_graphics();
-                }
-            })
+            }else if(editor_mode == EDITOR_MODES.ERASE){
+                this.update_selected_lines(pos);
+            }else if(editor_mode == EDITOR_MODES.SPAWN){
+                this.editor_set_spawn(pos);
+            }
         }
     }
 
@@ -649,16 +691,11 @@
         delete touch_pointers[evt.pointerID];
     }
 
-    this.getBodyAtMouse = function() {
-        selectedBody = null;
-        mouseVec = new b2Vec2(mouseX, mouseY);
-        var aabb = new b2AABB();
-        aabb.lowerBound.Set(mouseX, mouseY);
-        aabb.upperBound.Set(mouseX, mouseY);
-        world.QueryAABB(getBodyCallBack, aabb);
-        return selectedBody;
+    this.editor_set_spawn = function(pos){
+        lvl.player.start.x = pos.x;
+        lvl.player.start.y = pos.y;
+        refreshIndicators();
     }
-    
     
     this.getBodyCallBack = function(fixture) {
         if (fixture.GetBody().GetType() != b2Body.b2_staticBody) {
@@ -669,14 +706,6 @@
         }
         return true;
     }
-    
-    this.debug_screen_on_off = function() {
-        if (box2dDebug) {
-            $(box2dCanvas).css('opacity', 1);
-        } else {
-            $(box2dCanvas).css('opacity', 0);
-        }
-    };
 
     
     this.addContactListener = function() {
@@ -725,8 +754,5 @@
 
         canvasWidth = w;
         canvasHeight = h;
-
-        box2dCanvas.width = w;
-        box2dCanvas.height = h;
     }
 }());
