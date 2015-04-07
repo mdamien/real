@@ -227,6 +227,8 @@
     };
 
     this.editor_load_bg = function(evt) {
+        Ticker.setPaused(false);
+
         var tgt = evt.target || window.event.srcElement,
             files = tgt.files;
 
