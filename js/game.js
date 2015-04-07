@@ -340,32 +340,34 @@
         Ticker.addEventListener("tick", tick);
     };
     
-    this.tick = function() {
-        world.Step(1 / 15,  10, 10);
-        world.ClearForces();
+    this.tick = function(e) {
+        if (!e.paused) {
+            world.Step(1 / 15,  10, 10);
+            world.ClearForces();
 
-        handleInteractions();
-        player.update();    
+            handleInteractions();
+            player.update();
 
-        for (var i=0; i < pigs.length; i++) {
-            pigs[i].update();
+            for (var i=0; i < pigs.length; i++) {
+                pigs[i].update();
+            }
+
+            //If we want image always centered:
+          //  vp.x = -(canvasWidth - lvl.bg.img.width*vp.zoom)/2;
+          //  vp.y = -(canvasHeight - lvl.bg.img.height*vp.zoom)/2;
+
+            //If we want character always centered:
+            vp.x = -(canvasWidth)/2 + player.skin.x*vp.zoom;
+            vp.y = -(canvasHeight)/2 + player.skin.y*vp.zoom;
+
+            vp.container.x = -vp.x;
+            vp.container.y = -vp.y;
+
+            vp.container.scaleX = vp.zoom
+            vp.container.scaleY = vp.zoom
+
+            stage.update();
         }
-
-        //If we want image always centered:
-      //  vp.x = -(canvasWidth - lvl.bg.img.width*vp.zoom)/2;
-      //  vp.y = -(canvasHeight - lvl.bg.img.height*vp.zoom)/2;
-
-        //If we want character always centered:
-        vp.x = -(canvasWidth)/2 + player.skin.x*vp.zoom;
-        vp.y = -(canvasHeight)/2 + player.skin.y*vp.zoom;
-
-        vp.container.x = -vp.x;
-        vp.container.y = -vp.y;
-
-        vp.container.scaleX = vp.zoom
-        vp.container.scaleY = vp.zoom
-
-        stage.update();
     };
     
     this.handleKeyDown = function(evt) {
@@ -379,6 +381,7 @@
                 this.editor_on_off()
                 break;
             case 'n':
+                Ticker.setPaused(!Ticker.getPaused());
                 new_bg_modal = !new_bg_modal;
                 this.modal_on_off();
                 break;
