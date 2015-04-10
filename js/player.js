@@ -58,7 +58,7 @@
             else {
                 if(this.jetpack_activated){
                     this.body.GetBody().ApplyForce(
-                        new b2Vec2(0, -2),
+                        new b2Vec2(0, -25),
                         this.body.GetBody().GetWorldCenter());
                 }
             }

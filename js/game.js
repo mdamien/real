@@ -32,7 +32,7 @@
     
     var box2dUtils; 
     var context;
-    var SCALE = 30; 
+    var SCALE = 30;
     var world;
     var canvasWidth, canvasHeight;
 
@@ -50,6 +50,7 @@
     var indicators = [];
 
     var new_bg_modal = URL_PARAMS['new'];
+    var game_parameters_modal = false;
 
     var lines_parent = null;
     var bg_parent = null;
@@ -130,6 +131,10 @@
             $('#editor .erase').on('click', this.editor_erase_mode.bind(this))
             $('#editor .spawn').on('click', this.editor_spawn_mode.bind(this))
 
+            //Parameters form input
+            $('button.validate-parameters').on('click', this.game_parameters_validate.bind(this));
+            $('button.cancel-parameters').on('click', this.game_parameters_cancel.bind(this));
+
             window.onresize = function(){ onResize(); }
             onResize();
             
@@ -164,7 +169,7 @@
         lvl = new_lvl;
 
         bg_parent.removeAllChildren();
-        background = new Background(bg_parent, SCALE, new_lvl.bg);
+        background = new Background(bg_parent, new_lvl.bg.scale, new_lvl.bg);
         bg_parent.addChild(background.skin);
 
         this.reset_lines();
@@ -177,13 +182,32 @@
         }else{
             world.SetGravity(new b2Vec2(0, 10))
         }
-        
+
+        this.update_form_parameter_gravity(new_lvl.gravity);
+        this.update_form_parameter_scale(new_lvl.bg.scale);
+        this.update_form_parameter_jetpack(player.jetpack_activated);
+
         player.setPos(lvl.player.start.x, lvl.player.start.y)
     
         if(next !== undefined){
             next()
         }
     }
+
+    this.update_form_parameter_gravity = function(new_gravity) {
+        if (typeof new_gravity === "number")
+            $('#gravity').val(new_gravity);
+    }
+
+    this.update_form_parameter_scale = function(new_scale) {
+        if (typeof new_scale === "number")
+            $('#scale-parameter').val(new_scale);
+    }
+
+    this.update_form_parameter_jetpack = function(jetpack_enabled) {
+        $('#jetpack').prop('checked', jetpack_enabled);
+    }
+
 
     this.save_level = function(){
         var a = document.getElementById('save');
@@ -209,6 +233,7 @@
     
     this.modal_on_off = function(){
         $('#new_level').toggle(new_bg_modal);
+        $('#game_parameters').toggle(game_parameters_modal);
     }
     
     this.prepareStage = function() {
@@ -253,6 +278,7 @@
                     };
                     load_level_post(new_lvl, function(){
                         new_bg_modal = false;
+                        game_parameters_modal = false;
                         modal_on_off();
                         display_help();
                     });
@@ -385,6 +411,7 @@
             case 'n':
                 Ticker.setPaused(!Ticker.getPaused());
                 new_bg_modal = !new_bg_modal;
+                game_parameters_modal = false;
                 this.modal_on_off();
                 break;
             case 'p':
@@ -420,6 +447,12 @@
                 break;
             case 'd':
                 debugger;
+                break;
+            case 'o':
+                Ticker.setPaused(true);
+                game_parameters_modal = !game_parameters_modal;
+                new_bg_modal = false;
+                this.modal_on_off();
                 break;
         }
         if(editor_activated){
@@ -526,6 +559,25 @@
         return true;
     }
 
+    this.game_parameters_validate = function() {
+        lvl.gravity = parseFloat($('#gravity').val());
+        world.SetGravity(new b2Vec2(0, lvl.gravity));
+        player.jetpack_activated = ($('#jetpack:checked').val() !== undefined);
+
+        Ticker.setPaused(!Ticker.getPaused());
+        game_parameters_modal = !game_parameters_modal;
+        this.modal_on_off();
+
+        return false;
+    }
+
+    this.game_parameters_cancel = function() {
+        Ticker.setPaused(!Ticker.getPaused());
+        game_parameters_modal = !game_parameters_modal;
+        this.modal_on_off();
+
+        return false;
+    }
 
     this.change_mode = function(mode){
         editor_mode = mode;
