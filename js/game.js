@@ -79,6 +79,8 @@
 
     var touch_pointers = {};
 
+    var redo_lines = [];
+
     $(document).ready(function() {
         load();
     });
@@ -126,6 +128,7 @@
 
             $('#editor-background').on('change', this.editor_load_bg.bind(this))
             $('#editor .undo').on('click', this.editor_undo.bind(this))
+            $('#editor .redo').on('click', this.editor_redo.bind(this))
             $('#editor .draw').on('click', this.editor_draw_mode.bind(this))
             $('#editor .erase').on('click', this.editor_erase_mode.bind(this))
             $('#editor .spawn').on('click', this.editor_spawn_mode.bind(this))
@@ -418,6 +421,9 @@
             case '9':
                 this.load_level(LEVELS['fleurs']);
                 break;
+            case 's':
+                this.save_level();
+                break;
             case 'd':
                 debugger;
                 break;
@@ -429,9 +435,6 @@
                 break;
             case 'c':
                 player.setPos(lvl.player.start.x, lvl.player.start.y);
-                break;
-            case 's':
-                this.save_level();
                 break;
             case 'g':
                 lvl.gravity = parseFloat(prompt("Set gravity","0"));
@@ -468,6 +471,9 @@
             case 'u':
                 this.editor_undo();
                 break;
+            case 't':
+                this.editor_redo();
+                break;
             }
         }
         if(evt.key == '-' || evt.keyCode == 189){
@@ -481,7 +487,15 @@
     this.editor_undo = function(){
         var last = lines.pop();
         last.remove();
+        redo_lines.push(last.coords);
         return true;
+    }
+
+    this.editor_redo = function(){
+        if(redo_lines.length > 0){
+            var coords = redo_lines.pop();
+            addLine(coords);
+        }
     }
 
     this.editor_remove_selected_lines = function(){
@@ -656,6 +670,7 @@
         if(editor_activated){
             if(editor_mode == EDITOR_MODES.DRAW){
                 curr_line = this.addLine([pos,pos]);
+                redo_lines = [];
                 drawing = true;
             }else if(editor_mode == EDITOR_MODES.ERASE){
                 this.editor_remove_selected_lines();
