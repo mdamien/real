@@ -80,6 +80,10 @@
 
     var touch_pointers = {};
 
+    var redo_lines = [];
+
+    var paused = false;
+
     $(document).ready(function() {
         load();
     });
@@ -127,6 +131,7 @@
 
             $('#editor-background').on('change', this.editor_load_bg.bind(this))
             $('#editor .undo').on('click', this.editor_undo.bind(this))
+            $('#editor .redo').on('click', this.editor_redo.bind(this))
             $('#editor .draw').on('click', this.editor_draw_mode.bind(this))
             $('#editor .erase').on('click', this.editor_erase_mode.bind(this))
             $('#editor .spawn').on('click', this.editor_spawn_mode.bind(this))
@@ -266,19 +271,20 @@
                         player:{
                             start:{
                                 x:5,
-                                y:3,
+                                y:3
                             }
                         },
                         bg:{
                             src: fr.result,
                             scale: parseFloat($('#scale').val()),
-                            img: img,
+                            img: img
                         },
-                        lines: [],
+                        lines: []
                     };
                     load_level_post(new_lvl, function(){
                         new_bg_modal = false;
                         game_parameters_modal = false;
+                        paused = false;
                         modal_on_off();
                         display_help();
                     });
@@ -369,33 +375,33 @@
     };
     
     this.tick = function(e) {
-        if (!e.paused) {
+        if(!paused){
             world.Step(1 / 15,  10, 10);
             world.ClearForces();
-
-            handleInteractions();
-            player.update();
-
-            for (var i=0; i < pigs.length; i++) {
-                pigs[i].update();
-            }
-
-            //If we want image always centered:
-          //  vp.x = -(canvasWidth - lvl.bg.img.width*vp.zoom)/2;
-          //  vp.y = -(canvasHeight - lvl.bg.img.height*vp.zoom)/2;
-
-            //If we want character always centered:
-            vp.x = -(canvasWidth)/2 + player.skin.x*vp.zoom;
-            vp.y = -(canvasHeight)/2 + player.skin.y*vp.zoom;
-
-            vp.container.x = -vp.x;
-            vp.container.y = -vp.y;
-
-            vp.container.scaleX = vp.zoom
-            vp.container.scaleY = vp.zoom
-
-            stage.update();
         }
+
+        handleInteractions();
+        player.update();
+
+        for (var i=0; i < pigs.length; i++) {
+            pigs[i].update();
+        }
+
+        //If we want image always centered:
+      //  vp.x = -(canvasWidth - lvl.bg.img.width*vp.zoom)/2;
+      //  vp.y = -(canvasHeight - lvl.bg.img.height*vp.zoom)/2;
+
+        //If we want character always centered:
+        vp.x = -(canvasWidth)/2 + player.skin.x*vp.zoom;
+        vp.y = -(canvasHeight)/2 + player.skin.y*vp.zoom;
+
+        vp.container.x = -vp.x;
+        vp.container.y = -vp.y;
+
+        vp.container.scaleX = vp.zoom
+        vp.container.scaleY = vp.zoom
+
+        stage.update();
     };
     
     this.handleKeyDown = function(evt) {
@@ -409,8 +415,8 @@
                 this.editor_on_off()
                 break;
             case 'n':
-                Ticker.setPaused(!Ticker.getPaused());
                 new_bg_modal = !new_bg_modal;
+                paused = new_bg_modal;
                 game_parameters_modal = false;
                 this.modal_on_off();
                 break;
@@ -445,14 +451,22 @@
             case '9':
                 this.load_level(LEVELS['fleurs']);
                 break;
+            case 's':
+                this.save_level();
+                break;
+            case 'm':
+                paused = !paused;
+                break;
             case 'd':
                 debugger;
                 break;
             case 'o':
-                Ticker.setPaused(true);
-                game_parameters_modal = !game_parameters_modal;
-                new_bg_modal = false;
-                this.modal_on_off();
+                paused = true;
+                if (game_parameters_modal == false) {
+                    game_parameters_modal = !game_parameters_modal;
+                    new_bg_modal = false;
+                    this.modal_on_off();
+                }
                 break;
         }
         if(editor_activated){
@@ -462,9 +476,6 @@
                 break;
             case 'c':
                 player.setPos(lvl.player.start.x, lvl.player.start.y);
-                break;
-            case 's':
-                this.save_level();
                 break;
             case 'g':
                 lvl.gravity = parseFloat(prompt("Set gravity","0"));
@@ -501,6 +512,9 @@
             case 'u':
                 this.editor_undo();
                 break;
+            case 't':
+                this.editor_redo();
+                break;
             }
         }
         if(evt.key == '-' || evt.keyCode == 189){
@@ -514,7 +528,15 @@
     this.editor_undo = function(){
         var last = lines.pop();
         last.remove();
+        redo_lines.push(last.coords);
         return true;
+    }
+
+    this.editor_redo = function(){
+        if(redo_lines.length > 0){
+            var coords = redo_lines.pop();
+            addLine(coords);
+        }
     }
 
     this.editor_remove_selected_lines = function(){
@@ -564,7 +586,7 @@
         world.SetGravity(new b2Vec2(0, lvl.gravity));
         player.jetpack_activated = ($('#jetpack:checked').val() !== undefined);
 
-        Ticker.setPaused(!Ticker.getPaused());
+        paused = false;
         game_parameters_modal = !game_parameters_modal;
         this.modal_on_off();
 
@@ -572,7 +594,7 @@
     }
 
     this.game_parameters_cancel = function() {
-        Ticker.setPaused(!Ticker.getPaused());
+        paused = false;
         game_parameters_modal = !game_parameters_modal;
         this.modal_on_off();
 
@@ -708,6 +730,7 @@
         if(editor_activated){
             if(editor_mode == EDITOR_MODES.DRAW){
                 curr_line = this.addLine([pos,pos]);
+                redo_lines = [];
                 drawing = true;
             }else if(editor_mode == EDITOR_MODES.ERASE){
                 this.editor_remove_selected_lines();

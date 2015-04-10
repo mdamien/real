@@ -49,4 +49,4 @@ PIXLINGS (similar game):
 feedback: mario-like scrolling, online marketplace, dynamic items, 3D pictures
 
 MODALS FORMS :
-- Make sure opening "new" form and "params" one after the other works. (Game pausing bug)
+- Save previous settings for cancel.
