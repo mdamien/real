@@ -285,6 +285,8 @@
                         new_bg_modal = false;
                         game_parameters_modal = false;
                         paused = false;
+                        editor_activated = true;
+                        editor_on_off();
                         modal_on_off();
                         display_help();
                     });
@@ -517,7 +519,7 @@
                 break;
             }
         }
-        if(evt.key == '-' || evt.keyCode == 189){
+        if(evt.key == '-' || evt.keyCode == 189 || evt.keyCode == 54){
             vp.zoom /= 2;
         }
         if(evt.key == '+' || evt.keyCode == 187){

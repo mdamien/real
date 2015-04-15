@@ -7,9 +7,8 @@
         this.box2dUtils = new Box2dUtils(scale);
         this.body = null;
         this.jumpContacts = 0;
-        this.jetpack_activated = true;
+        this.jetpack_activated = false;
 
-        //SpriteSheet data for Sprite animation.
         var data = {
             images: ["img/bird.png", "img/carotte.png"],
             frames: { regX: 250, regY: 220, width: 400, height: 400 },
@@ -27,17 +26,13 @@
 
         bitmap.gotoAndPlay("stand");
 
-    //    var bitmap = new createjs.Bitmap(img);
         bitmap.x = this.x;
         bitmap.y = this.y;
 
         this.BITMAP_SCALE = 0.15
         bitmap.scaleX = this.BITMAP_SCALE;
         bitmap.scaleY = this.BITMAP_SCALE;
-
-      //  bitmap.regX = 250;
-    //    bitmap.regY = 190;
-
+        
         this.stage.addChild(bitmap);
 
         this.skin = bitmap;
