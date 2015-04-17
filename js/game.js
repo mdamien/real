@@ -149,8 +149,16 @@
         }.bind(this));
     }
 
+    this.load_level_by_url = function(url, next){
+        console.log('load url:',url);
+        $.getJSON(url,function(new_lvl){
+            this.load_level(new_lvl, next);
+        }.bind(this))
+    }
+
     this.load_level = function(new_lvl, next){
         console.log(new_lvl)
+        //this.load_level_by_url('levels/demo.json')
         var queue = new createjs.LoadQueue();
 
         $('#loading').html("loading level")
@@ -158,6 +166,7 @@
         queue.on("complete", function(){
             $('#loading').hide();
             new_lvl.bg.img = queue.getResult("bg");
+            //console.log(new_lvl.bg.img)
             load_level_post(new_lvl, next);
         }, this);
         queue.loadManifest([
