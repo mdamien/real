@@ -23,7 +23,7 @@ body, html {
     opacity: 0;
 }
 
-#new_level {
+#new_level, #game_parameters {
     background-color: transparent;
     position: absolute;
     width: 30%;
