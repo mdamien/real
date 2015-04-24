@@ -15,7 +15,7 @@
             }
             URL_PARAMS[kv[0]] = kv[1];
         })
-    }
+    };
 
     var URL_PARAMS = {
         'new': false,
@@ -608,6 +608,10 @@
         paused = false;
         game_parameters_modal = !game_parameters_modal;
         this.modal_on_off();
+
+        $('#scale-parameter').val(lvl.bg.scale);
+        $('#gravity').val(lvl.gravity);
+        $('#jetpack').prop("checked", player.jetpack_activated);
 
         return false;
     }
