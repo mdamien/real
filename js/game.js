@@ -129,7 +129,6 @@
             stage.addEventListener('pressmove', handlePressMove);
             stage.addEventListener('pressup', handlePressUp);
 
-            $('#editor-background').on('change', this.editor_load_bg.bind(this))
             $('#editor .undo').on('click', this.editor_undo.bind(this))
             $('#editor .redo').on('click', this.editor_redo.bind(this))
             $('#editor .draw').on('click', this.editor_draw_mode.bind(this))
@@ -139,6 +138,10 @@
             //Parameters form input
             $('button.validate-parameters').on('click', this.game_parameters_validate.bind(this));
             $('button.cancel-parameters').on('click', this.game_parameters_cancel.bind(this));
+
+            //New level form input
+            $('button.validate-newlevel').on('click', this.game_newlevel_validate.bind(this));
+            $('button.cancel-newlevel').on('click', this.game_newlevel_cancel.bind(this));
 
             window.onresize = function(){ onResize(); }
             onResize();
@@ -265,11 +268,8 @@
         world = box2dUtils.createWorld(context); 
     };
 
-    this.editor_load_bg = function(evt) {
+    this.editor_load_bg = function(files) {
         Ticker.setPaused(false);
-
-        var tgt = evt.target || window.event.srcElement,
-            files = tgt.files;
 
         if (files && files.length) {
             var fr = new FileReader();
@@ -590,6 +590,26 @@
     this.editor_spawn_mode = function(){
         this.change_mode('spawn')
         return true;
+    }
+
+    this.game_newlevel_validate = function() {
+        var myFile = $('#editor-background').prop('files');
+        editor_load_bg(myFile);
+
+        paused = false;
+
+        new_bg_modal = !new_bg_modal;
+        this.modal_on_off();
+        return false;
+    }
+
+    this.game_newlevel_cancel = function() {
+
+        paused = false;
+
+        new_bg_modal = !new_bg_modal;
+        this.modal_on_off();
+        return false;
     }
 
     this.game_parameters_validate = function() {
