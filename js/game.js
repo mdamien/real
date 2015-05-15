@@ -268,7 +268,7 @@
     };
 
     this.editor_load_bg = function(files) {
-        Ticker.setPaused(false);
+        paused = true;
 
         if (files && files.length) {
             var fr = new FileReader();
