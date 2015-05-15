@@ -4,8 +4,9 @@ PUBLI 1: [GOAL: Before 27 March]
 IDEAS:
 
     -- TOP --
+- HOME level: load level, demos, new level in a level
 - load level from file / url
-- editor real interface (buttons)
+- editor buttons: help, options, new level, load level
 
     -- OTHERS --
 - redo (history)
@@ -14,6 +15,8 @@ IDEAS:
 - free camera
 
 - jetpack
+
+- snap points for lines (!)
 
 - animations
 - sounds / music
@@ -29,6 +32,8 @@ IDEAS:
 
 - level sharing website
 
+- react ui ?
+
 BUGS:
 - ramp accel
 - pig spawn
@@ -37,9 +42,10 @@ BUGS:
 
 FEEDBACK:
 - no goals
-- hard to add lines (needs panning)
-- too static: dynamic items, ennemies,...
+- hard to add lines (needs panning) => unzoom/zoom
+- too static: dynamic items, ennemies,... => pigs ?
 - animations
+- player invisible on dark
 
 
 PIXLINGS (similar game):
