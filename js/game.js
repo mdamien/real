@@ -134,6 +134,8 @@
             $('#editor .redo').on('click', this.editor_redo.bind(this))
             $('#editor .draw').on('click', this.editor_draw_mode.bind(this))
             $('#editor .erase').on('click', this.editor_erase_mode.bind(this))
+            $('#editor .unzoom').on('click', this.unzoom.bind(this))
+            $('#editor .zoom').on('click', this.zoom.bind(this))
             $('#editor .spawn').on('click', this.editor_spawn_mode.bind(this))
 
             //Parameters form input
@@ -230,6 +232,14 @@
         var data = JSON.stringify(lvl);
         a.href = 'data:text/json;charset=utf8,' + encodeURIComponent(data);
         a.click();
+    }
+
+    this.unzoom = function(){
+        vp.zoom /= 2;
+    }
+
+    this.zoom = function(){
+        vp.zoom *= 2;
     }
 
     this.editor_on_off = function(){
@@ -528,10 +538,10 @@
             }
         }
         if(evt.key == '-' || evt.keyCode == 189 || evt.keyCode == 54){
-            vp.zoom /= 2;
+            this.unzom();
         }
         if(evt.key == '+' || evt.keyCode == 187){
-            vp.zoom *= 2;
+            this.zoom();
         }
     }
 

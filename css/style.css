@@ -123,6 +123,14 @@ body, html {
     background-image: url("../img/buttons/redo.png");
 }
 
+#editor button.zoom {
+    background-image: url("../img/buttons/zoom.png");
+}
+
+#editor button.unzoom {
+    background-image: url("../img/buttons/unzoom.png");
+}
+
 #editor ul {
     list-style: none;
     text-align: center;
