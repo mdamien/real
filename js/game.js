@@ -116,7 +116,8 @@
         player = new Player(vp.container, SCALE, loaded_queue.getResult('bird'));
         player.createPlayer(world, 0, 0, 16);
 
-        this.load_level(LEVELS[URL_PARAMS['lvl']], function(){ 
+        //this.load_level_by_url('levels/sam.json', function(){
+        this.load_level(LEVELS[URL_PARAMS['lvl']], function(){
             addContactListener();
 
             $('#gipCanvas').on('mousedown', handleMouseDown.bind(this));
@@ -156,14 +157,13 @@
 
     this.load_level_by_url = function(url, next){
         console.log('load url:',url);
-        $.getJSON(url,function(new_lvl){
+        $.getJSON(url,function(new_lvl){ //TODO: remove caching ?
             this.load_level(new_lvl, next);
         }.bind(this))
     }
 
     this.load_level = function(new_lvl, next){
         console.log(new_lvl)
-        //this.load_level_by_url('levels/demo.json')
         var queue = new createjs.LoadQueue();
 
         $('#loading').html("loading level")
@@ -171,7 +171,6 @@
         queue.on("complete", function(){
             $('#loading').hide();
             new_lvl.bg.img = queue.getResult("bg");
-            //console.log(new_lvl.bg.img)
             load_level_post(new_lvl, next);
         }, this);
         queue.loadManifest([
