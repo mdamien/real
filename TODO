@@ -5,8 +5,7 @@ IDEAS:
 
     -- TOP --
 - HOME level: load level, demos, new level in a level
-- load level from file / url
-- editor buttons: help, options, new level, load level
+- make save and load works
 
     -- OTHERS --
 - redo (history)
@@ -14,6 +13,8 @@ IDEAS:
 
 - red lines for "danger" (kill it with fire!)
 - tutorial level
+
+- editor buttons: help, options, new level, load level
 
 - free camera
 

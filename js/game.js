@@ -21,7 +21,7 @@
         'new': false,
         editor: false,
         editor_mode: EDITOR_MODES.DRAW,
-        lvl: 'lvl2',
+        lvl: 'home',
     };
     this.parse_url_params();
     console.log(URL_PARAMS);
@@ -538,7 +538,7 @@
             }
         }
         if(evt.key == '-' || evt.keyCode == 189 || evt.keyCode == 54){
-            this.unzom();
+            this.unzoom();
         }
         if(evt.key == '+' || evt.keyCode == 187){
             this.zoom();
