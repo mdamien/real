@@ -248,10 +248,9 @@
         }
         convertImgToBase64URL(lvl.bg.src, "image/jpeg",function(img_base64){
             console.log("img saved", img_base64.length);
-            lvl.bg.img_base64 = img_base64
             var zip = new JSZip();
             zip.file("level.json", JSON.stringify(lvl,null,2));
-            zip.file("bg.jpg", img_base64);
+            zip.file("bg.jpg.base64", img_base64);
             var content = zip.generate({type:"blob"});
             // see FileSaver.js
             saveAs(content, "example.zip");
