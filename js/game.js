@@ -447,7 +447,11 @@
 
         stage.update();
     };
-    
+
+    this.modalActivated = function() {
+        return new_bg_modal || game_parameters_modal
+    }
+
     this.handleKeyDown = function(evt) {
         keys[evt.keyCode] = true;
 
@@ -472,28 +476,36 @@
                 display_help();
                 break;
             case '1':
-                this.load_level(LEVELS['base']);
+                if (!modalActivated())
+                    this.load_level(LEVELS['base']);
                 break;
             case '2':
-                this.load_level(LEVELS['xkcd1']);
+                if (!modalActivated())
+                    this.load_level(LEVELS['xkcd1']);
                 break;
             case '3':
-                this.load_level(LEVELS['bertille']);
+                if (!modalActivated())
+                    this.load_level(LEVELS['bertille']);
                 break;
             case '4':
-                this.load_level(LEVELS['lvl2']);
+                if (!modalActivated())
+                    this.load_level(LEVELS['lvl2']);
                 break;
             case '5':
-                this.load_level(LEVELS['laurie']);
+                if (!modalActivated())
+                    this.load_level(LEVELS['laurie']);
                 break;
             case '7':
-                this.load_level(LEVELS['parc']);
+                if (!modalActivated())
+                    this.load_level(LEVELS['parc']);
                 break;
             case '8':
-                this.load_level(LEVELS['laby']);
+                if (!modalActivated())
+                    this.load_level(LEVELS['laby']);
                 break;
             case '9':
-                this.load_level(LEVELS['fleurs']);
+                if (!modalActivated())
+                    this.load_level(LEVELS['fleurs']);
                 break;
             case 's':
                 this.save_level();
