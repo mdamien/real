@@ -21,7 +21,7 @@
         'new': false,
         editor: false,
         editor_mode: EDITOR_MODES.DRAW,
-        lvl: 'lvl2',
+        lvl: 'home',
     };
     this.parse_url_params();
     console.log(URL_PARAMS);
@@ -116,7 +116,8 @@
         player = new Player(vp.container, SCALE, loaded_queue.getResult('bird'));
         player.createPlayer(world, 0, 0, 16);
 
-        this.load_level(LEVELS[URL_PARAMS['lvl']], function(){ 
+        //this.load_level_by_url('levels/sam.json', function(){
+        this.load_level(LEVELS[URL_PARAMS['lvl']], function(){
             addContactListener();
 
             $('#gipCanvas').on('mousedown', handleMouseDown.bind(this));
@@ -133,6 +134,8 @@
             $('#editor .redo').on('click', this.editor_redo.bind(this))
             $('#editor .draw').on('click', this.editor_draw_mode.bind(this))
             $('#editor .erase').on('click', this.editor_erase_mode.bind(this))
+            $('#editor .unzoom').on('click', this.unzoom.bind(this))
+            $('#editor .zoom').on('click', this.zoom.bind(this))
             $('#editor .spawn').on('click', this.editor_spawn_mode.bind(this))
 
             //Parameters form input
@@ -159,14 +162,13 @@
 
     this.load_level_by_url = function(url, next){
         console.log('load url:',url);
-        $.getJSON(url,function(new_lvl){
+        $.getJSON(url,function(new_lvl){ //TODO: remove caching ?
             this.load_level(new_lvl, next);
         }.bind(this))
     }
 
     this.load_level = function(new_lvl, next){
         console.log(new_lvl)
-        //this.load_level_by_url('levels/demo.json')
         var queue = new createjs.LoadQueue();
 
         $('#loading').html("loading level")
@@ -174,7 +176,6 @@
         queue.on("complete", function(){
             $('#loading').hide();
             new_lvl.bg.img = queue.getResult("bg");
-            //console.log(new_lvl.bg.img)
             load_level_post(new_lvl, next);
         }, this);
         queue.loadManifest([
@@ -233,6 +234,14 @@
         a.click();
     }
 
+    this.unzoom = function(){
+        vp.zoom /= 2;
+    }
+
+    this.zoom = function(){
+        vp.zoom *= 2;
+    }
+
     this.editor_on_off = function(){
         editor_parent.visible = editor_activated;
         $('#editor').toggle(editor_activated);
@@ -269,7 +278,7 @@
     };
 
     this.editor_load_bg = function(files) {
-        Ticker.setPaused(false);
+        paused = true;
 
         if (files && files.length) {
             var fr = new FileReader();
@@ -540,11 +549,11 @@
                 break;
             }
         }
-        if(evt.key == '-' || evt.keyCode == 189){
-            vp.zoom /= 2;
+        if(evt.key == '-' || evt.keyCode == 189 || evt.keyCode == 54){
+            this.unzoom();
         }
         if(evt.key == '+' || evt.keyCode == 187){
-            vp.zoom *= 2;
+            this.zoom();
         }
     }
 

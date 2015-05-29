@@ -4,16 +4,23 @@ PUBLI 1: [GOAL: Before 27 March]
 IDEAS:
 
     -- TOP --
-- load level from file / url
-- editor real interface (buttons)
+- HOME level: load level, demos, new level in a level
+- make save and load works
 
     -- OTHERS --
 - redo (history)
 - dynamic world scale
 
+- red lines for "danger" (kill it with fire!)
+- tutorial level
+
+- editor buttons: help, options, new level, load level
+
 - free camera
 
 - jetpack
+
+- snap points for lines (!)
 
 - animations
 - sounds / music
@@ -29,6 +36,8 @@ IDEAS:
 
 - level sharing website
 
+- react ui ?
+
 BUGS:
 - ramp accel
 - pig spawn
@@ -37,9 +46,10 @@ BUGS:
 
 FEEDBACK:
 - no goals
-- hard to add lines (needs panning)
-- too static: dynamic items, ennemies,...
+- hard to add lines (needs panning) => unzoom/zoom
+- too static: dynamic items, ennemies,... => pigs ?
 - animations
+- player invisible on dark
 
 
 PIXLINGS (similar game):
