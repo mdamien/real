@@ -43,7 +43,9 @@
     var b2Vec2 = Box2D.Common.Math.b2Vec2;
     var b2AABB = Box2D.Collision.b2AABB;
     var b2Body = Box2D.Dynamics.b2Body;
-    
+
+    var canWarpCharacter = true;
+
     var pigs = [];
     
     var lines = [];
@@ -158,6 +160,13 @@
 
             startTicker(30);
         }.bind(this));
+    }
+
+    this.new_level_modal = function() {
+        new_bg_modal = !new_bg_modal;
+        paused = new_bg_modal;
+        game_parameters_modal = false;
+        this.modal_on_off();
     }
 
     this.load_level_by_url = function(url, next){
@@ -439,10 +448,7 @@
                 this.editor_on_off()
                 break;
             case 'n':
-                new_bg_modal = !new_bg_modal;
-                paused = new_bg_modal;
-                game_parameters_modal = false;
-                this.modal_on_off();
+                new_level_modal();
                 break;
             case 'p':
                 var pig = box2dUtils.createPig(world, vp.container, Math.random() * canvasWidth, Math.random() * canvasHeight - 400 / SCALE);
@@ -701,8 +707,24 @@
                 if(Math.sqrt(
                       Math.pow(tp.x*SCALE - player.skin.x,2)
                     + Math.pow(tp.y*SCALE - player.skin.y,2)
-                ) < 50){
-                    load_level(LEVELS[tp.lvl]);
+                ) < 50) {
+                    if (tp.lvl == "<new>") {
+                        if (!modalActivated()) {
+                            if (canWarpCharacter) {
+                                canWarpCharacter = false
+                                new_level_modal();
+                            }
+                        }
+                    }
+                    else {
+                        load_level(LEVELS[tp.lvl]);
+                    }
+                    canWarpCharacter = false;
+                }
+                else {
+                    if (tp.lvl == "<new>") {
+                        canWarpCharacter = true;
+                    }
                 }
             })
         }
