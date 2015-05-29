@@ -86,6 +86,8 @@
 
     var paused = false;
 
+    var bg_img = null;
+
     $(document).ready(function() {
         load();
     });
@@ -178,13 +180,15 @@
 
     this.load_level = function(new_lvl, next){
         console.log(new_lvl)
+        paused = true
         var queue = new createjs.LoadQueue();
 
         $('#loading').html("loading level")
         $('#loading').show()
         queue.on("complete", function(){
+            paused = false
             $('#loading').hide();
-            new_lvl.bg.img = queue.getResult("bg");
+            bg_img = queue.getResult("bg");
             load_level_post(new_lvl, next);
         }, this);
         queue.loadManifest([
@@ -196,7 +200,7 @@
         lvl = new_lvl;
 
         bg_parent.removeAllChildren();
-        background = new Background(bg_parent, new_lvl.bg.scale, new_lvl.bg);
+        background = new Background(bg_parent, new_lvl.bg.scale, bg_img, new_lvl.bg);
         bg_parent.addChild(background.skin);
 
         this.reset_lines();
@@ -235,12 +239,31 @@
         $('#jetpack').prop('checked', jetpack_enabled);
     }
 
-
     this.save_level = function(){
-        var a = document.getElementById('save');
-        var data = JSON.stringify(lvl);
-        a.href = 'data:text/json;charset=utf8,' + encodeURIComponent(data);
-        a.click();
+        var convertImgToBase64URL = function(url, outputFormat, callback){
+            var img = new Image();
+            img.crossOrigin = 'Anonymous';
+            img.onload = function(){
+                var canvas = document.createElement('CANVAS'),
+                ctx = canvas.getContext('2d'), dataURL;
+                canvas.height = img.height;
+                canvas.width = img.width;
+                ctx.drawImage(img, 0, 0);
+                dataURL = canvas.toDataURL(outputFormat);
+                callback(dataURL);
+                canvas = null; 
+            };
+            img.src = url;
+        }
+        convertImgToBase64URL(lvl.bg.src, "image/jpeg",function(img_base64){
+            console.log("img saved", img_base64.length);
+            var zip = new JSZip();
+            zip.file("level.json", JSON.stringify(lvl,null,2));
+            zip.file("bg.jpg.base64", img_base64);
+            var content = zip.generate({type:"blob"});
+            // see FileSaver.js
+            saveAs(content, "example.zip");
+        })
     }
 
     this.unzoom = function(){
@@ -329,7 +352,7 @@
             line.remove();
         });
         lines = []
-        var bg = background.options.img;
+        var bg = background.bg_img;
         var h = bg.height/SCALE*background.options.scale;
         var w = bg.width/SCALE*background.options.scale;
         addLine([{x:0, y:h},{x:w, y:h}]) //bottom

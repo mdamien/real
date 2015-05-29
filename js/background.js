@@ -1,16 +1,17 @@
 (function(){
-    Background = function(container, scale, options) {
+    Background = function(container, scale, bg_img, options) {
         this.skin = null;
         this.container = container;
         this.scale = scale;
         this.options = options;
+        this.bg_img = bg_img;
         this.init();
     };
     
     Background.prototype = {
         
         init: function() {
-            var bitmap = new createjs.Bitmap(this.options.img);
+            var bitmap = new createjs.Bitmap(this.bg_img);
 
             bitmap.x = 0;
             bitmap.y = 0;
