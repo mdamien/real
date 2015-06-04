@@ -49,6 +49,8 @@
     var new_bg_modal = URL_PARAMS['new'];
     var game_parameters_modal = false;
 
+    var load_modal = false;
+
     var lines_parent = null;
     var bg_parent = null;
     var indicators_parent = null;
@@ -162,6 +164,15 @@
         new_bg_modal = !new_bg_modal;
         paused = new_bg_modal;
         game_parameters_modal = false;
+        load_modal = false;
+        this.modal_on_off();
+    }
+
+    this.load_level_modal = function() {
+        load_modal = !load_modal;
+        paused = load_modal;
+        game_parameters_modal = false;
+        new_bg_modal = false;
         this.modal_on_off();
     }
 
@@ -266,6 +277,7 @@
     this.modal_on_off = function(){
         $('#new_level').toggle(new_bg_modal);
         $('#game_parameters').toggle(game_parameters_modal);
+        $('#load_level').toggle(load_modal);
     }
     
     this.prepareStage = function() {
@@ -308,6 +320,7 @@
                     load_level_post(new_lvl, function(){
                         new_bg_modal = false;
                         game_parameters_modal = false;
+                        load_modal = false;
                         paused = false;
                         editor_activated = true;
                         editor_on_off();
@@ -431,7 +444,7 @@
     };
 
     this.modalActivated = function() {
-        return new_bg_modal || game_parameters_modal
+        return new_bg_modal || game_parameters_modal || load_modal
     }
 
     this.handleKeyDown = function(evt) {
@@ -447,6 +460,9 @@
                     break;
                 case 'n':
                     new_level_modal();
+                    break;
+                case 'l':
+                    load_level_modal();
                     break;
                 case 'p':
                     var pig = box2dUtils.createPig(world, vp.container, Math.random() * canvasWidth, Math.random() * canvasHeight - 400 / SCALE);
@@ -493,6 +509,7 @@
                     if (game_parameters_modal == false) {
                         game_parameters_modal = !game_parameters_modal;
                         new_bg_modal = false;
+                        load_modal = false;
                         this.modal_on_off();
                     }
                     break;
@@ -699,11 +716,16 @@
                       Math.pow(tp.x*SCALE - player.skin.x,2)
                     + Math.pow(tp.y*SCALE - player.skin.y,2)
                 ) < 50) {
-                    if (tp.lvl == "<new>") {
+                    if (tp.lvl[0] == "<") {
                         if (!modalActivated()) {
                             if (canWarpCharacter) {
                                 canWarpCharacter = false
-                                new_level_modal();
+                                if(tp.lvl == "<new>"){
+                                    new_level_modal();
+                                }
+                                if(tp.lvl == "<load>"){
+                                    load_level_modal();
+                                }
                             }
                         }
                     }
@@ -713,7 +735,7 @@
                     canWarpCharacter = false;
                 }
                 else {
-                    if (tp.lvl == "<new>") {
+                    if (tp.lvl == "<") {
                         canWarpCharacter = true;
                     }
                 }
