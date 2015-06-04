@@ -1,29 +1,24 @@
 (function() {
     var EDITOR_MODES = {DRAW:'draw', ERASE:'erase', SPAWN:'spawn'};
 
-    this.parse_url_params = function() {
-        window.location.hash.slice(1).split('|').forEach(function(param){
-            var kv = param.split(':');
-            if(kv.length == 1){
-                kv.push(true);
-            }
-            if(kv[1] == 'false'){
-                kv[1] = false;
-            }
-            if(kv[1] == 'true'){
-                kv[1] = true;
-            }
-            URL_PARAMS[kv[0]] = kv[1];
-        })
-    };
+    this.query_params = function(dict, qs) {
+        qs = qs.split("+").join(" ");
 
+        var tokens,
+            re = /[?&]?([^=]+)=([^&]*)\//g;
+
+        while (tokens = re.exec(qs)) {
+            dict[decodeURIComponent(tokens[1])]
+                = decodeURIComponent(tokens[2]);
+        }
+    }
     var URL_PARAMS = {
         'new': false,
         editor: false,
         editor_mode: EDITOR_MODES.DRAW,
         lvl: 'levels/home.json',
     };
-    this.parse_url_params();
+    this.query_params(URL_PARAMS, document.location.search);
     console.log("url params",URL_PARAMS);
     
     var Ticker = createjs.Ticker;
