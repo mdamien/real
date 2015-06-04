@@ -1,0 +1,10 @@
+{
+        player:{
+            start:{x:72.3,y:25.4},
+        },
+        bg:{
+            src: "img/dorian.jpg",
+            scale: 1,
+        },
+        lines:[],
+    }

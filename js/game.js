@@ -444,124 +444,118 @@
 
         var c = String.fromCharCode(evt.keyCode).toLowerCase();
 
-        switch (c) {
-            case 'e':
-                editor_activated = !editor_activated;
-                this.editor_on_off()
-                break;
-            case 'n':
-                new_level_modal();
-                break;
-            case 'p':
-                var pig = box2dUtils.createPig(world, vp.container, Math.random() * canvasWidth, Math.random() * canvasHeight - 400 / SCALE);
-                pigs.push(pig);
-                break;
-            case 'h':
-                display_help();
-                break;
-            case '1':
-                if (!modalActivated())
-                    this.load_level(LEVELS['base']);
-                break;
-            case '2':
-                if (!modalActivated())
-                    this.load_level(LEVELS['xkcd1']);
-                break;
-            case '3':
-                if (!modalActivated())
-                    this.load_level(LEVELS['bertille']);
-                break;
-            case '4':
-                if (!modalActivated())
-                    this.load_level(LEVELS['lvl2']);
-                break;
-            case '5':
-                if (!modalActivated())
-                    this.load_level(LEVELS['laurie']);
-                break;
-            case '7':
-                if (!modalActivated())
-                    this.load_level(LEVELS['parc']);
-                break;
-            case '8':
-                if (!modalActivated())
-                    this.load_level(LEVELS['laby']);
-                break;
-            case '9':
-                if (!modalActivated())
-                    this.load_level(LEVELS['fleurs']);
-                break;
-            case 's':
-                this.save_level();
-                break;
-            case 'm':
-                paused = !paused;
-                break;
-            case 'd':
-                debugger;
-                break;
-            case 'o':
-                paused = true;
-                if (game_parameters_modal == false) {
-                    game_parameters_modal = !game_parameters_modal;
-                    new_bg_modal = false;
-                    this.modal_on_off();
-                }
-                break;
-        }
-        if(editor_activated){
+        if (!modalActivated()){
             switch (c) {
-            case 'r':
-                reset_lines();
-                break;
-            case 'c':
-                player.setPos(lvl.player.start.x, lvl.player.start.y);
-                break;
-            case 'g':
-                lvl.gravity = parseFloat(prompt("Set gravity","0"));
-                world.SetGravity(new b2Vec2(0, lvl.gravity))
-                break;
-            case 'i':
-                this.editor_set_spawn({x:player.skin.x/SCALE, y:player.skin.y/SCALE})
-                break;
-            case 'k':
-                this.editor_erase_mode();
-                break;
-                /*
-            case 't':
-                var x = parseFloat(prompt("TP x:","0"));
-                var y = parseFloat(prompt("TP y:","0"));
-                if(x && y){
-                    player.setPos(x, y);
-                }
-                break;
-                */ //TODO: deasactivate theses shortcuts when "ctrl" is pressed
-
-            case 'y':
-                var x = player.skin.x/SCALE;
-                var y = player.skin.y/SCALE;
-                var lvl_name = prompt("lvl","")
-                if(lvl_name.length > 0){
-                    if(lvl.tps === undefined){
-                        lvl.tps = [];
+                case 'e':
+                    editor_activated = !editor_activated;
+                    this.editor_on_off()
+                    break;
+                case 'n':
+                    new_level_modal();
+                    break;
+                case 'p':
+                    var pig = box2dUtils.createPig(world, vp.container, Math.random() * canvasWidth, Math.random() * canvasHeight - 400 / SCALE);
+                    pigs.push(pig);
+                    break;
+                case 'h':
+                    display_help();
+                    break;
+                case '1':
+                    this.load_level_by_url('levels/base.json');
+                    break;
+                case '2':
+                    this.load_level_by_url('levels/xkcd1.json');
+                    break;
+                case '3':
+                    this.load_level_by_url('levels/bertille.json');
+                    break;
+                case '4':
+                    this.load_level_by_url('levels/lvl2.json');
+                    break;
+                case '5':
+                    this.load_level_by_url('levels/laurie.json');
+                    break;
+                case '7':
+                    this.load_level_by_url('levels/parc.json');
+                    break;
+                case '8':
+                    this.load_level_by_url('levels/laby.json');
+                    break;
+                case '9':
+                    this.load_level_by_url('levels/fleurs.json');
+                    break;
+                case 's':
+                    this.save_level();
+                    break;
+                case 'm':
+                    paused = !paused;
+                    break;
+                case 'd':
+                    debugger;
+                    break;
+                case 'o':
+                    paused = true;
+                    if (game_parameters_modal == false) {
+                        game_parameters_modal = !game_parameters_modal;
+                        new_bg_modal = false;
+                        this.modal_on_off();
                     }
-                    lvl.tps.push({lvl:lvl_name, x:x, y:y})
-                }
-                refreshIndicators();
-                break;
-            case 'u':
-                this.editor_undo();
-                break;
-            case 't':
-                this.editor_redo();
-                break;
+                    break;
             }
-        }
-        if(evt.key == '-' || evt.keyCode == 189 || evt.keyCode == 54){
-            this.unzoom();
-        }
-        if(evt.key == '+' || evt.keyCode == 187){
-            this.zoom();
+            if(editor_activated){
+                switch (c) {
+                case 'r':
+                    reset_lines();
+                    break;
+                case 'c':
+                    player.setPos(lvl.player.start.x, lvl.player.start.y);
+                    break;
+                case 'g':
+                    lvl.gravity = parseFloat(prompt("Set gravity","0"));
+                    world.SetGravity(new b2Vec2(0, lvl.gravity))
+                    break;
+                case 'i':
+                    this.editor_set_spawn({x:player.skin.x/SCALE, y:player.skin.y/SCALE})
+                    break;
+                case 'k':
+                    this.editor_erase_mode();
+                    break;
+                    /*
+                case 't':
+                    var x = parseFloat(prompt("TP x:","0"));
+                    var y = parseFloat(prompt("TP y:","0"));
+                    if(x && y){
+                        player.setPos(x, y);
+                    }
+                    break;
+                    */ //TODO: deasactivate theses shortcuts when "ctrl" is pressed
+
+                case 'y':
+                    var x = player.skin.x/SCALE;
+                    var y = player.skin.y/SCALE;
+                    var lvl_name = prompt("lvl","")
+                    if(lvl_name.length > 0){
+                        if(lvl.tps === undefined){
+                            lvl.tps = [];
+                        }
+                        lvl.tps.push({lvl:lvl_name, x:x, y:y})
+                    }
+                    refreshIndicators();
+                    break;
+                case 'u':
+                    this.editor_undo();
+                    break;
+                case 't':
+                    this.editor_redo();
+                    break;
+                }
+            }
+            if(evt.key == '-' || evt.keyCode == 189 || evt.keyCode == 54){
+                this.unzoom();
+            }
+            if(evt.key == '+' || evt.keyCode == 187){
+                this.zoom();
+            }
         }
     }
 
@@ -719,7 +713,7 @@
                         }
                     }
                     else {
-                        load_level(LEVELS[tp.lvl]);
+                        load_level_by_url(tp.lvl);
                     }
                     canWarpCharacter = false;
                 }

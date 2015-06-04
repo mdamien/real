@@ -1,14 +1,14 @@
 {
-        player:{
-            start:{
-                x:12.75,
-                y:37,
-            },
-        },
-        bg:{
-            src: "img/laurie.jpg",
-            scale: 1.5,
-        },
-        lines:[],
-        gravity:9.5,
+  "player": {
+    "start": {
+      "x": 12.75,
+      "y": 37
     }
+  },
+  "bg": {
+    "src": "img/laurie.jpg",
+    "scale": 1.5
+  },
+  "lines": [],
+  "gravity": 9.5
+}
