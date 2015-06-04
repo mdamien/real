@@ -28,16 +28,17 @@
                     </div>
                 </div>
                 <div class="form-group">
-                    <label for="editor-background" class="col-sm-2 control-label">File</label>
+                    <label for="editor-background" class="col-sm-2 control-label">Image URL</label>
                     <div class="col-sm-10">
-                        <input type="file" id="editor-background">
-                        <p class="help-block">Background image file.</p>
+                        <input type="text" class="form-control" id="editor-background">
+                        <p class="help-block">You can upload it to
+                            <a href="http://imgur.com">imgur</a> for example</p>
                     </div>
                 </div>
                 <div class="form-group">
                     <div class="col-sm-offset-2 col-sm-10">
                         <button type="submit" class="btn btn-danger cancel-newlevel">Cancel</button>
-                        <button type="submit" class="btn btn-success validate-newlevel">Validate</button>
+                        <button type="submit" class="btn btn-success validate-newlevel">Create</button>
                     </div>
                 </div>
             </form>
@@ -107,7 +108,6 @@
 <script src="libs/Box2dWeb-2.1.a.3.min.js"></script>
 <script src="libs/easeljs-0.7.1.min.js"></script>
 <script src="libs/preloadjs-0.6.0.min.js"></script>
-<script src="libs/jszip.min.js"></script>
 
 <!-- utils -->
 <script src="js/box2dutils.js"></script>
@@ -118,9 +118,6 @@
 <script src="js/line.js"></script>
 <script src="js/pig.js"></script>
 <script src="js/player.js"></script>
-
-<!-- levels -->
-<script src="js/levels.js"></script>
 
 <!-- game -->
 <script src="js/game.js"></script>

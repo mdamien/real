@@ -21,10 +21,10 @@
         'new': false,
         editor: false,
         editor_mode: EDITOR_MODES.DRAW,
-        lvl: 'home',
+        lvl: 'levels/home.json',
     };
     this.parse_url_params();
-    console.log(URL_PARAMS);
+    console.log("url params",URL_PARAMS);
     
     var Ticker = createjs.Ticker;
     var gipCanvas;
@@ -120,8 +120,7 @@
         player = new Player(vp.container, SCALE, loaded_queue.getResult('bird'));
         player.createPlayer(world, 0, 0, 16);
 
-        //this.load_level_by_url('levels/sam.json', function(){
-        this.load_level(LEVELS[URL_PARAMS['lvl']], function(){
+        this.load_level_by_url(URL_PARAMS.lvl, function(){
             addContactListener();
 
             $('#gipCanvas').on('mousedown', handleMouseDown.bind(this));
@@ -173,13 +172,13 @@
 
     this.load_level_by_url = function(url, next){
         console.log('load url:',url);
-        $.getJSON(url,function(new_lvl){ //TODO: remove caching ?
+        $.getJSON(url,function(new_lvl){
             this.load_level(new_lvl, next);
         }.bind(this))
     }
 
     this.load_level = function(new_lvl, next){
-        console.log(new_lvl)
+        console.log("lvl to load",new_lvl)
         paused = true
         var queue = new createjs.LoadQueue();
 
@@ -240,30 +239,10 @@
     }
 
     this.save_level = function(){
-        var convertImgToBase64URL = function(url, outputFormat, callback){
-            var img = new Image();
-            img.crossOrigin = 'Anonymous';
-            img.onload = function(){
-                var canvas = document.createElement('CANVAS'),
-                ctx = canvas.getContext('2d'), dataURL;
-                canvas.height = img.height;
-                canvas.width = img.width;
-                ctx.drawImage(img, 0, 0);
-                dataURL = canvas.toDataURL(outputFormat);
-                callback(dataURL);
-                canvas = null; 
-            };
-            img.src = url;
-        }
-        convertImgToBase64URL(lvl.bg.src, "image/jpeg",function(img_base64){
-            console.log("img saved", img_base64.length);
-            var zip = new JSZip();
-            zip.file("level.json", JSON.stringify(lvl,null,2));
-            zip.file("bg.jpg.base64", img_base64);
-            var content = zip.generate({type:"blob"});
-            // see FileSaver.js
-            saveAs(content, "example.zip");
-        })
+        saveAs(new Blob(
+            [JSON.stringify(lvl,null,2)],
+            {type: "text/plain;charset=utf-8"}
+        ), "level.json");
     }
 
     this.unzoom = function(){
