@@ -146,6 +146,10 @@
             $('button.validate-newlevel').on('click', this.game_newlevel_validate.bind(this));
             $('button.cancel-newlevel').on('click', this.game_newlevel_cancel.bind(this));
 
+
+            $('button.cancel-loadlevel').on('click', this.close_modals.bind(this));
+
+
             window.onresize = function(){ onResize(); }
             onResize();
             
@@ -158,6 +162,15 @@
 
             startTicker(30);
         }.bind(this));
+    }
+
+    this.close_modals = function() {
+        new_bg_modal = false;
+        paused = false;
+        game_parameters_modal = false;
+        load_modal = false;
+        this.modal_on_off();
+        return false;
     }
 
     this.new_level_modal = function() {
@@ -295,43 +308,31 @@
         world = box2dUtils.createWorld(context); 
     };
 
-    this.editor_load_bg = function(files) {
+    this.editor_load_src = function(src) {
         paused = true;
-
-        if (files && files.length) {
-            var fr = new FileReader();
-            fr.onload = function () {
-                var img = new Image();
-                img.onload = function() {
-                    var new_lvl = {
-                        player:{
-                            start:{
-                                x:5,
-                                y:3
-                            }
-                        },
-                        bg:{
-                            src: fr.result,
-                            scale: parseFloat($('#scale').val()),
-                            img: img
-                        },
-                        lines: []
-                    };
-                    load_level_post(new_lvl, function(){
-                        new_bg_modal = false;
-                        game_parameters_modal = false;
-                        load_modal = false;
-                        paused = false;
-                        editor_activated = true;
-                        editor_on_off();
-                        modal_on_off();
-                        display_help();
-                    });
+        var new_lvl = {
+            player:{
+                start:{
+                    x:5,
+                    y:3
                 }
-                img.src = fr.result;
-            }
-            fr.readAsDataURL(files[0]);
-        }
+            },
+            bg:{
+                src: src,
+                scale: parseFloat($('#scale').val()),
+            },
+            lines: []
+        };
+        load_level(new_lvl, function(){
+            new_bg_modal = false;
+            game_parameters_modal = false;
+            load_modal = false;
+            paused = false;
+            editor_activated = true;
+            editor_on_off();
+            modal_on_off();
+            display_help();
+        });
     }
 
     this.reset_lines = function(){
@@ -628,12 +629,10 @@
     }
 
     this.game_newlevel_validate = function() {
-        var myFile = $('#editor-background').prop('files');
-        editor_load_bg(myFile);
-
+        var img_src = $('#editor-background').val();
+        editor_load_src(img_src);
         paused = false;
-
-        new_bg_modal = !new_bg_modal;
+        new_bg_modal = false;
         this.modal_on_off();
         return false;
     }
