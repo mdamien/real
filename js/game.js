@@ -1,15 +1,12 @@
 (function() {
     var EDITOR_MODES = {DRAW:'draw', ERASE:'erase', SPAWN:'spawn'};
 
-    this.query_params = function(dict, qs) {
-        qs = qs.split("+").join(" ");
-        
-        var tokens,
-            re = /[?&]?([^=]+)=([^&]*)\//g;
-
-        while (tokens = re.exec(qs)) {
-            dict[decodeURIComponent(tokens[1])]
-                = decodeURIComponent(tokens[2]);
+    this.query_params = function(dict) {
+        var query = window.location.search.substring(1);
+        var vars = query.split('&');
+        for (var i = 0; i < vars.length; i++) {
+            var pair = vars[i].split('=');
+            dict[decodeURIComponent(pair[0])] = decodeURIComponent(pair[1])
         }
     }
     var URL_PARAMS = {
@@ -18,7 +15,7 @@
         editor_mode: EDITOR_MODES.DRAW,
         lvl: 'levels/home.json',
     };
-    this.query_params(URL_PARAMS, document.location.search);
+    this.query_params(URL_PARAMS);
     console.log("url params",URL_PARAMS);
     
     var Ticker = createjs.Ticker;
