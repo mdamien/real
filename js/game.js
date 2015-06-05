@@ -709,7 +709,7 @@
 
     
     this.handleInteractions = function() {
-        if(lvl.tps && !editor_activated){
+        if(!paused && lvl.tps && !editor_activated){
             lvl.tps.forEach(function(tp){
                 if(Math.sqrt(
                       Math.pow(tp.x*SCALE - player.skin.x,2)
