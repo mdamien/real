@@ -3,7 +3,7 @@
 
     this.query_params = function(dict, qs) {
         qs = qs.split("+").join(" ");
-
+        
         var tokens,
             re = /[?&]?([^=]+)=([^&]*)\//g;
 
@@ -13,7 +13,7 @@
         }
     }
     var URL_PARAMS = {
-        'new': false,
+        new: false,
         editor: false,
         editor_mode: EDITOR_MODES.DRAW,
         lvl: 'levels/home.json',
