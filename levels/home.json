@@ -1273,12 +1273,12 @@
   ],
   "tps": [
     {
-      "lvl": "levels/sana.json",
+      "lvl": "levels/fleurs.json",
       "x": 160.33377023867328,
       "y": 19.067698165185966
     },
     {
-      "lvl": "levels/dorian.json",
+      "lvl": "levels/xkcd.json",
       "x": 105.56361082232098,
       "y": 47.506231083762124
     },
