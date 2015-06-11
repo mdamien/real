@@ -418,6 +418,7 @@
         }
 
         handleInteractions();
+        player.updateAnimation(keys);
         player.update();
 
         for (var i=0; i < pigs.length; i++) {
