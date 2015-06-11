@@ -255,6 +255,11 @@
     }
 
     this.save_level = function(){
+        // Getting lines displayed in the map to save the level correctly.
+        lvl.lines = lines.map(function(l) {
+            return l.coords
+        });
+
         saveAs(new Blob(
             [JSON.stringify(lvl,null,2)],
             {type: "text/plain;charset=utf-8"}
@@ -586,7 +591,7 @@
 
     this.editor_remove_selected_lines = function(){
         lines.filter(function(l){return l.selected }).map(function(l){l.remove()})
-        lvl.lines = lines = lines.filter(function(l){ return !l.selected })
+        lines = lines.filter(function(l){ return !l.selected })
     }
 
     this.update_selected_lines = function(pos){
