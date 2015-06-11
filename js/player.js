@@ -12,7 +12,7 @@
         this.bitmap = null
 
         var data = {
-            images: ["img/character/walking_1.png", "img/character/walking_2.png", "img/character/walking_3.png", "img/bird.png"],
+            images: ["img/character/walking_1v2.png", "img/character/walking_2v2.png", "img/character/walking_3v2.png", "img/bird.png"],
             //frames: { regX: 250, regY: 220, width: 400, height: 400 },
             frames: { regX: 250, regY: 220, width: 474, height: 384 },
             animations: {
