@@ -1273,21 +1273,25 @@
   ],
   "tps": [
     {
+      "name": "Fleurs",
       "lvl": "levels/fleurs.json",
       "x": 160.33377023867328,
       "y": 19.067698165185966
     },
     {
-      "lvl": "levels/xkcd.json",
+      "name": "XKCD",
+      "lvl": "levels/xkcd1.json",
       "x": 105.56361082232098,
       "y": 47.506231083762124
     },
     {
+      "name": "An adventure",
       "lvl": "levels/lvl2.json",
       "x": 93.58931374194047,
       "y": 45.73244683888711
     },
     {
+      "name": "Laby",
       "lvl": "levels/laby.json",
       "x": 82.18161107682756,
       "y": 41.950525051732875

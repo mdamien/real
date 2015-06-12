@@ -1684,12 +1684,14 @@
   ],
   "tps": [
     {
-      "lvl": "laby",
+      "name": "Laby",
+      "lvl": "levels/laby.json",
       "x": 33.418963920984346,
       "y": 133.97441198170884
     },
     {
-      "lvl": "xkcd1",
+      "name": "XKCD",
+      "lvl": "levels/xkcd1.json",
       "x": 87.1939025287948,
       "y": 106.42709292391494
     }

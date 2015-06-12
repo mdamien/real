@@ -707,11 +707,12 @@
     
     this.handleInteractions = function() {
         if(!paused && lvl.tps && !editor_activated){
+            var no_level_touched = true;
             lvl.tps.forEach(function(tp){
                 if(Math.sqrt(
                       Math.pow(tp.x*SCALE - player.skin.x,2)
                     + Math.pow(tp.y*SCALE - player.skin.y,2)
-                ) < 50) {
+                ) < 100) {
                     if (tp.lvl[0] == "<") {
                         if (!modalActivated()) {
                             if (canWarpCharacter) {
@@ -724,11 +725,18 @@
                                 }
                             }
                         }
+                        canWarpCharacter = false;
                     }
                     else {
-                        load_level_by_url(tp.lvl);
+                        canWarpCharacter = true;
+                        no_level_touched = false
+                        $('#loading').html("<strong>"+tp.name+"</strong><br/>Press space to load")
+                        $('#loading').show()
+                        var space_keycode = 32;
+                        if(keys[space_keycode] != undefined && keys[space_keycode] == true){
+                            load_level_by_url(tp.lvl);
+                        }
                     }
-                    canWarpCharacter = false;
                 }
                 else {
                     if (tp.lvl == "<") {
@@ -736,6 +744,9 @@
                     }
                 }
             })
+            if(no_level_touched){
+                $('#loading').hide()
+            }
         }
 
         for(key in touch_pointers){
