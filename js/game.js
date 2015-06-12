@@ -36,8 +36,6 @@
     var b2AABB = Box2D.Collision.b2AABB;
     var b2Body = Box2D.Dynamics.b2Body;
 
-    var canWarpCharacter = true;
-
     var pigs = [];
     
     var lines = [];
@@ -719,34 +717,24 @@
                       Math.pow(tp.x*SCALE - player.skin.x,2)
                     + Math.pow(tp.y*SCALE - player.skin.y,2)
                 ) < 100) {
-                    if (tp.lvl[0] == "<") {
-                        if (!modalActivated()) {
-                            if (canWarpCharacter) {
-                                canWarpCharacter = false
+                    no_level_touched = false
+                    $('#loading').html("<strong>"+tp.name+"</strong><br/>Press space")
+                    $('#loading').show()
+                    var space_keycode = 32;
+                    if(keys[space_keycode] != undefined && keys[space_keycode] == true){
+                        if (tp.lvl[0] == "<") {
+                            if (!modalActivated()) {
                                 if(tp.lvl == "<new>"){
                                     new_level_modal();
                                 }
                                 if(tp.lvl == "<load>"){
                                     load_level_modal();
                                 }
+                                $('#loading').hide()
                             }
-                        }
-                        canWarpCharacter = false;
-                    }
-                    else {
-                        canWarpCharacter = true;
-                        no_level_touched = false
-                        $('#loading').html("<strong>"+tp.name+"</strong><br/>Press space to load")
-                        $('#loading').show()
-                        var space_keycode = 32;
-                        if(keys[space_keycode] != undefined && keys[space_keycode] == true){
+                        }else{
                             load_level_by_url(tp.lvl);
                         }
-                    }
-                }
-                else {
-                    if (tp.lvl == "<") {
-                        canWarpCharacter = true;
                     }
                 }
             })
