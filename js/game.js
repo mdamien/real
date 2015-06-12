@@ -2,7 +2,7 @@
     var EDITOR_MODES = {DRAW:'draw', ERASE:'erase', SPAWN:'spawn'};
 
     this.query_params = function(dict) {
-        var query = window.location.search.substring(1);
+        var query = window.location.search.substring(1).replace(/\/$/, "");
         var vars = query.split('&');
         for (var i = 0; i < vars.length; i++) {
             var pair = vars[i].split('=');
@@ -421,7 +421,7 @@
         }
 
         handleInteractions();
-        player.updateAnimation(keys);
+        player.updateAnimation(keys, paused);
         player.update();
 
         for (var i=0; i < pigs.length; i++) {
@@ -570,6 +570,9 @@
             if(evt.key == '+' || evt.keyCode == 187){
                 this.zoom();
             }
+        }
+        if(evt.keyCode == 27){ //ESC
+            close_modals();
         }
     }
 

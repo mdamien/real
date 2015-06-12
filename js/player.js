@@ -48,8 +48,8 @@
             this.animationToPlay = animation;
         },
 
-        updateAnimation: function(keys) {
-            if (keys[37] || keys[39]) {
+        updateAnimation: function(keys, paused) {
+            if (!paused && (keys[37] || keys[39])) {
                 this.playAnimation("walk")
             } else {
                 this.playAnimation("stand")
